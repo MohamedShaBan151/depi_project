@@ -209,7 +209,7 @@ class _CartSummary extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final freeShippingThreshold = 200.0;
+    const freeShippingThreshold = 200.0;
     final progress = (state.cartTotal / freeShippingThreshold).clamp(0.0, 1.0);
     final remaining = freeShippingThreshold - state.cartTotal;
 

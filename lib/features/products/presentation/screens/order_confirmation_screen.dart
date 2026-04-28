@@ -175,7 +175,7 @@ class _OrderConfirmationScreenState extends State<OrderConfirmationScreen>
               ),
               Text(
                 'Free',
-                style: const TextStyle(color: AppColors.success),
+                style: TextStyle(color: AppColors.success),
               ),
             ],
           ),

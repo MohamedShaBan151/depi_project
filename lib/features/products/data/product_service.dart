@@ -11,22 +11,22 @@ class ProductService {
   // ── Mock data ──────────────────────────────────────────────────────────────
 
   static final List<ProductModel> _mockProducts = [
-    ProductModel(id: 'e1', name: 'Samsung Galaxy S24 Ultra', price: 4299, category: 'Electronics', stock: 12, imageUrl: ''),
-    ProductModel(id: 'e2', name: 'Apple AirPods Pro (2nd Gen)', price: 899, category: 'Electronics', stock: 30, imageUrl: ''),
-    ProductModel(id: 'e3', name: 'Sony 65" 4K OLED TV', price: 7499, category: 'Electronics', stock: 5, imageUrl: ''),
-    ProductModel(id: 'e4', name: 'iPad Air M2 Wi-Fi 256GB', price: 2599, category: 'Electronics', stock: 18, imageUrl: ''),
-    ProductModel(id: 'f1', name: 'Adidas Ultraboost 22 Running Shoes', price: 549, category: 'Fashion', stock: 40, imageUrl: ''),
-    ProductModel(id: 'f2', name: 'Levi\'s 511 Slim Fit Jeans', price: 299, category: 'Fashion', stock: 60, imageUrl: ''),
-    ProductModel(id: 'f3', name: 'Nike Therma-FIT Hoodie', price: 249, category: 'Fashion', stock: 35, imageUrl: ''),
-    ProductModel(id: 'f4', name: 'Ray-Ban Classic Aviator Sunglasses', price: 699, category: 'Fashion', stock: 22, imageUrl: ''),
-    ProductModel(id: 'g1', name: 'Almarai Full Cream Milk 2L', price: 12, category: 'Grocery', stock: 200, imageUrl: ''),
-    ProductModel(id: 'g2', name: 'Basmati Rice Premium 5kg', price: 45, category: 'Grocery', stock: 150, imageUrl: ''),
-    ProductModel(id: 'g3', name: 'Nescafé Gold Blend 200g', price: 68, category: 'Grocery', stock: 80, imageUrl: ''),
-    ProductModel(id: 'g4', name: 'Dates Medjool Premium 1kg', price: 89, category: 'Grocery', stock: 90, imageUrl: ''),
-    ProductModel(id: 't1', name: 'LEGO Technic Bugatti Chiron', price: 1299, category: 'Toys', stock: 8, imageUrl: ''),
-    ProductModel(id: 't2', name: 'Barbie Dreamhouse Playset', price: 549, category: 'Toys', stock: 15, imageUrl: ''),
-    ProductModel(id: 't3', name: 'Hot Wheels 20-Car Gift Pack', price: 89, category: 'Toys', stock: 60, imageUrl: ''),
-    ProductModel(id: 't4', name: 'Remote Control Monster Truck', price: 199, category: 'Toys', stock: 25, imageUrl: ''),
+    const ProductModel(id: 'e1', name: 'Samsung Galaxy S24 Ultra', price: 4299, category: 'Electronics', stock: 12, imageUrl: ''),
+    const ProductModel(id: 'e2', name: 'Apple AirPods Pro (2nd Gen)', price: 899, category: 'Electronics', stock: 30, imageUrl: ''),
+    const ProductModel(id: 'e3', name: 'Sony 65" 4K OLED TV', price: 7499, category: 'Electronics', stock: 5, imageUrl: ''),
+    const ProductModel(id: 'e4', name: 'iPad Air M2 Wi-Fi 256GB', price: 2599, category: 'Electronics', stock: 18, imageUrl: ''),
+    const ProductModel(id: 'f1', name: 'Adidas Ultraboost 22 Running Shoes', price: 549, category: 'Fashion', stock: 40, imageUrl: ''),
+    const ProductModel(id: 'f2', name: 'Levi\'s 511 Slim Fit Jeans', price: 299, category: 'Fashion', stock: 60, imageUrl: ''),
+    const ProductModel(id: 'f3', name: 'Nike Therma-FIT Hoodie', price: 249, category: 'Fashion', stock: 35, imageUrl: ''),
+    const ProductModel(id: 'f4', name: 'Ray-Ban Classic Aviator Sunglasses', price: 699, category: 'Fashion', stock: 22, imageUrl: ''),
+    const ProductModel(id: 'g1', name: 'Almarai Full Cream Milk 2L', price: 12, category: 'Grocery', stock: 200, imageUrl: ''),
+    const ProductModel(id: 'g2', name: 'Basmati Rice Premium 5kg', price: 45, category: 'Grocery', stock: 150, imageUrl: ''),
+    const ProductModel(id: 'g3', name: 'Nescafé Gold Blend 200g', price: 68, category: 'Grocery', stock: 80, imageUrl: ''),
+    const ProductModel(id: 'g4', name: 'Dates Medjool Premium 1kg', price: 89, category: 'Grocery', stock: 90, imageUrl: ''),
+    const ProductModel(id: 't1', name: 'LEGO Technic Bugatti Chiron', price: 1299, category: 'Toys', stock: 8, imageUrl: ''),
+    const ProductModel(id: 't2', name: 'Barbie Dreamhouse Playset', price: 549, category: 'Toys', stock: 15, imageUrl: ''),
+    const ProductModel(id: 't3', name: 'Hot Wheels 20-Car Gift Pack', price: 89, category: 'Toys', stock: 60, imageUrl: ''),
+    const ProductModel(id: 't4', name: 'Remote Control Monster Truck', price: 199, category: 'Toys', stock: 25, imageUrl: ''),
   ];
 
   // ── Stream API (matches original interface) ────────────────────────────────

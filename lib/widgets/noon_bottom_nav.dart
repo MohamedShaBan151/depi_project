@@ -103,7 +103,7 @@ class _NoonItemController {
     _pillCtrl = AnimationController(
         vsync: vsync, duration: const Duration(milliseconds: 460));
     _pillScale =
-        CurvedAnimation(parent: _pillCtrl, curve: _BackOutCurve(2.2));
+        CurvedAnimation(parent: _pillCtrl, curve: const _BackOutCurve(2.2));
     _pillOpacity =
         CurvedAnimation(parent: _pillCtrl, curve: Curves.easeOut);
 
@@ -117,7 +117,7 @@ class _NoonItemController {
       ),
       TweenSequenceItem(
         tween: Tween<double>(begin: -7, end: -5)
-            .chain(CurveTween(curve: _ElasticOutCurve(1.0, 0.45))),
+            .chain(CurveTween(curve: const _ElasticOutCurve(1.0, 0.45))),
         weight: 70,
       ),
     ]).animate(_iconCtrl);
@@ -129,12 +129,12 @@ class _NoonItemController {
       ),
       TweenSequenceItem(
         tween: Tween<double>(begin: 1.2, end: 1.15)
-            .chain(CurveTween(curve: _ElasticOutCurve(1.0, 0.45))),
+            .chain(CurveTween(curve: const _ElasticOutCurve(1.0, 0.45))),
         weight: 70,
       ),
     ]).animate(_iconCtrl);
     _iconRotation = Tween<double>(begin: -10 * math.pi / 180, end: 0)
-        .chain(CurveTween(curve: _ElasticOutCurve(1.1, 0.4)))
+        .chain(CurveTween(curve: const _ElasticOutCurve(1.1, 0.4)))
         .animate(_iconCtrl);
 
     _labelCtrl = AnimationController(
@@ -198,7 +198,7 @@ class _NoonItemController {
         duration: const Duration(milliseconds: 220), curve: Curves.easeIn);
     _iconCtrl.animateBack(0,
         duration: const Duration(milliseconds: 280),
-        curve: _BackOutCurve(1.4));
+        curve: const _BackOutCurve(1.4));
     _labelCtrl.animateTo(0,
         duration: const Duration(milliseconds: 160), curve: Curves.easeIn);
   }

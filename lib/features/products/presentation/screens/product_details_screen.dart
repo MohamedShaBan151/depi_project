@@ -411,10 +411,10 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
       color: Colors.white,
       margin: const EdgeInsets.only(top: 8),
       padding: const EdgeInsets.all(16),
-      child: Column(
+      child: const Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
+          Text(
             'البائع',
             style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
           ),

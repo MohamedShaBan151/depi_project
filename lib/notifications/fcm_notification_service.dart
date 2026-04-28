@@ -54,7 +54,7 @@ class NotificationService {
   }
 
   static Future<void> _showLocalNotification(RemoteMessage message) async {
-    final androidDetails = AndroidNotificationDetails(
+    const androidDetails = AndroidNotificationDetails(
       'noon_orders',
       'Order Notifications',
       channelDescription: 'Notifications for order updates',

@@ -4,7 +4,6 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../core/theme/saudi_theme.dart';
 import '../../../../cubits/shopping_cubit.dart';
-import '../../../../data/models/models.dart';
 
 class CheckoutScreen extends StatefulWidget {
   const CheckoutScreen({super.key});
