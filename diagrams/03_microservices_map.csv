@@ -1,0 +1,37 @@
+Id,Name,Shape Library,Page ID,Contained By,Line Source,Line Destination,Source Arrow,Destination Arrow,Text Area 1,Text Area 2
+1,Page,,,,,,,,"Microservices Map",
+2,Process,Flowchart Shapes,1,,,,,,"API Gateway","Entry point · TLS termination"
+3,Process,Flowchart Shapes,1,,,,,,"User Service","Auth · Profile · Addresses"
+4,Process,Flowchart Shapes,1,,,,,,"Product Service","Catalog · Variants · Pricing"
+5,Process,Flowchart Shapes,1,,,,,,"Search Service","Elasticsearch · Autocomplete"
+6,Process,Flowchart Shapes,1,,,,,,"Cart Service","Session cart · Persistence"
+7,Process,Flowchart Shapes,1,,,,,,"Order Service","Order lifecycle · History"
+8,Process,Flowchart Shapes,1,,,,,,"Payment Service","Stripe · Tabby · Tamara"
+9,Process,Flowchart Shapes,1,,,,,,"Inventory Service","Stock levels · Reservation"
+10,Process,Flowchart Shapes,1,,,,,,"Pricing Service","Promo · Flash sale · Coupons"
+11,Process,Flowchart Shapes,1,,,,,,"Notification Service","Email · SMS · Push"
+12,Process,Flowchart Shapes,1,,,,,,"Delivery Service","ETA · Courier integration"
+13,Process,Flowchart Shapes,1,,,,,,"Review Service","Ratings · Moderation"
+14,Process,Flowchart Shapes,1,,,,,,"Recommendation Engine","ML-based suggestions"
+15,Process,Flowchart Shapes,1,,,,,,"Seller Service","Merchant portal · Onboarding"
+16,Process,Flowchart Shapes,1,,,,,,"Kafka Event Bus","Async messaging"
+17,Line,Flowchart Shapes,1,,2,3,None,Arrow,,
+18,Line,Flowchart Shapes,1,,2,4,None,Arrow,,
+19,Line,Flowchart Shapes,1,,2,5,None,Arrow,,
+20,Line,Flowchart Shapes,1,,2,6,None,Arrow,,
+21,Line,Flowchart Shapes,1,,2,7,None,Arrow,,
+22,Line,Flowchart Shapes,1,,6,7,None,Arrow,,
+23,Line,Flowchart Shapes,1,,7,8,None,Arrow,,
+24,Line,Flowchart Shapes,1,,7,9,None,Arrow,,
+25,Line,Flowchart Shapes,1,,7,12,None,Arrow,,
+26,Line,Flowchart Shapes,1,,4,5,None,Arrow,,
+27,Line,Flowchart Shapes,1,,4,9,None,Arrow,,
+28,Line,Flowchart Shapes,1,,4,10,None,Arrow,,
+29,Line,Flowchart Shapes,1,,4,13,None,Arrow,,
+30,Line,Flowchart Shapes,1,,4,14,None,Arrow,,
+31,Line,Flowchart Shapes,1,,15,4,None,Arrow,,
+32,Line,Flowchart Shapes,1,,7,16,None,Arrow,,
+33,Line,Flowchart Shapes,1,,8,16,None,Arrow,,
+34,Line,Flowchart Shapes,1,,9,16,None,Arrow,,
+35,Line,Flowchart Shapes,1,,16,11,None,Arrow,,
+36,Line,Flowchart Shapes,1,,16,12,None,Arrow,,

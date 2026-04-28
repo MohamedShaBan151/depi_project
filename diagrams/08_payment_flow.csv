@@ -1,0 +1,29 @@
+Id,Name,Shape Library,Page ID,Contained By,Line Source,Line Destination,Source Arrow,Destination Arrow,Text Area 1,Text Area 2
+1,Page,,,,,,,,"Payment Flow",
+2,Swim Lane,Flowchart Shapes,1,,,,,,"Customer",
+3,Swim Lane,Flowchart Shapes,1,,,,,,"Payment Service",
+4,Swim Lane,Flowchart Shapes,1,,,,,,"Payment Gateway",
+5,Swim Lane,Flowchart Shapes,1,,,,,,"Bank / Issuer",
+6,Process,Flowchart Shapes,1,2,,,,,,"Select Payment Method","Card · COD · Tabby · Tamara"
+7,Process,Flowchart Shapes,1,2,,,,,,"Enter Card Details","PCI DSS tokenisation"
+8,Process,Flowchart Shapes,1,3,,,,,,"Create Payment Intent","Amount · currency · orderId"
+9,Process,Flowchart Shapes,1,3,,,,,,"Route to Gateway","Stripe / Network Int. / HyperPay"
+10,Process,Flowchart Shapes,1,4,,,,,,"Tokenize Card","Vault PAN · return token"
+11,Process,Flowchart Shapes,1,4,,,,,,"Initiate Authorization","Send to card network"
+12,Process,Flowchart Shapes,1,5,,,,,,"3DS Challenge","OTP / biometric"
+13,Decision,Flowchart Shapes,1,5,,,,,,"Auth Approved?",
+14,Process,Flowchart Shapes,1,4,,,,,,"Capture Funds","Settlement instruction"
+15,Process,Flowchart Shapes,1,3,,,,,,"Update Order","CONFIRMED state"
+16,Process,Flowchart Shapes,1,3,,,,,,"Emit payment.success","Kafka event"
+17,Process,Flowchart Shapes,1,3,,,,,,"Handle Decline","Retry logic · notify user"
+18,Line,Flowchart Shapes,1,,6,7,None,Arrow,,
+19,Line,Flowchart Shapes,1,,7,8,None,Arrow,,
+20,Line,Flowchart Shapes,1,,8,9,None,Arrow,,
+21,Line,Flowchart Shapes,1,,9,10,None,Arrow,,
+22,Line,Flowchart Shapes,1,,10,11,None,Arrow,,
+23,Line,Flowchart Shapes,1,,11,12,None,Arrow,,
+24,Line,Flowchart Shapes,1,,12,13,None,Arrow,,
+25,Line,Flowchart Shapes,1,,13,14,None,Arrow,"Yes",
+26,Line,Flowchart Shapes,1,,13,17,None,Arrow,"No",
+27,Line,Flowchart Shapes,1,,14,15,None,Arrow,,
+28,Line,Flowchart Shapes,1,,15,16,None,Arrow,,
