@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:noon_clone/features/auth/presentation/screens/splash_screen.dart';
 
 import '../../features/auth/presentation/screens/login_screen.dart';
 import '../../features/auth/presentation/screens/register_screen.dart';
@@ -14,10 +15,16 @@ import '../../features/products/presentation/screens/checkout_screen.dart';
 import '../../features/products/presentation/screens/order_confirmation_screen.dart';
 import '../../features/products/presentation/screens/order_history_screen.dart';
 import '../theme/saudi_theme.dart';
-
 final appRouter = GoRouter(
-  initialLocation: '/',
+  initialLocation: '/splash',
   routes: [
+
+    // ✅ Splash أول حاجة
+    GoRoute(
+      path: '/splash',
+      builder: (context, state) => const SplashScreen(),
+    ),
+
     ShellRoute(
       builder: (context, state, child) => MainShell(child: child),
       routes: [
@@ -36,8 +43,10 @@ final appRouter = GoRouter(
         GoRoute(path: '/checkout', builder: (context, state) => const CheckoutScreen()),
       ],
     ),
+
     GoRoute(path: '/login', builder: (context, state) => const LoginScreen()),
     GoRoute(path: '/register', builder: (context, state) => const RegisterScreen()),
+
     GoRoute(
       path: '/order-confirmation',
       builder: (context, state) => OrderConfirmationScreen(
@@ -47,7 +56,6 @@ final appRouter = GoRouter(
     ),
   ],
 );
-
 class MainShell extends StatefulWidget {
   final Widget child;
   const MainShell({super.key, required this.child});

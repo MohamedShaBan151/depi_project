@@ -14,16 +14,29 @@ class SplashScreen extends StatefulWidget {
 class _SplashScreenState extends State<SplashScreen> {
 
   @override
-  void initState() {
-    super.initState();
+void initState() {
+  super.initState();
 
-    // ⏳ بعد 2.5 ثانية يروح للـ register
+  WidgetsBinding.instance.addPostFrameCallback((_) {
     Timer(const Duration(seconds: 2, milliseconds: 500), () {
       if (mounted) {
         context.go('/register');
       }
     });
-  }
+  });
+}
+
+  // @override
+  // void initState() {
+  //   super.initState();
+
+  //   // ⏳ بعد 2.5 ثانية يروح للـ register
+  //   Timer(const Duration(seconds: 2, milliseconds: 500), () {
+  //     if (mounted) {
+  //       context.go('/register');
+  //     }
+  //   });
+  // }
 
   @override
   Widget build(BuildContext context) {

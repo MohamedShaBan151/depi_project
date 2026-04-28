@@ -58,10 +58,11 @@ class NoonApp extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         theme: SaudiTheme.theme,
 
-        // ✅ دي أهم سطر
-        builder: (context, child) {
-          return const SplashScreen();
-        },
+        //تم التعديل هنا
+        // // ✅ دي أهم سطر
+        // builder: (context, child) {
+        //   return const SplashScreen();
+        // },
 
         routerConfig: appRouter,
       ),
