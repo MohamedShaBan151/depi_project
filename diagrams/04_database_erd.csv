@@ -1,0 +1,29 @@
+Id,Name,Shape Library,Page ID,Contained By,Line Source,Line Destination,Source Arrow,Destination Arrow,Text Area 1,Text Area 2
+1,Page,,,,,,,,"Database ERD",
+2,Process,Flowchart Shapes,1,,,,,,"USERS","id · email · phone · name · created_at"
+3,Process,Flowchart Shapes,1,,,,,,"ADDRESSES","id · user_id · street · city · country · is_default"
+4,Process,Flowchart Shapes,1,,,,,,"PRODUCTS","id · seller_id · title · description · category_id · brand"
+5,Process,Flowchart Shapes,1,,,,,,"PRODUCT_VARIANTS","id · product_id · sku · price · stock · attributes"
+6,Process,Flowchart Shapes,1,,,,,,"CATEGORIES","id · parent_id · name · slug · level"
+7,Process,Flowchart Shapes,1,,,,,,"SELLERS","id · business_name · email · rating · verified"
+8,Process,Flowchart Shapes,1,,,,,,"ORDERS","id · user_id · address_id · status · total · created_at"
+9,Process,Flowchart Shapes,1,,,,,,"ORDER_ITEMS","id · order_id · variant_id · qty · unit_price"
+10,Process,Flowchart Shapes,1,,,,,,"PAYMENTS","id · order_id · method · amount · status · gateway_ref"
+11,Process,Flowchart Shapes,1,,,,,,"CART","id · user_id · created_at · expires_at"
+12,Process,Flowchart Shapes,1,,,,,,"CART_ITEMS","id · cart_id · variant_id · qty"
+13,Process,Flowchart Shapes,1,,,,,,"REVIEWS","id · product_id · user_id · rating · body · verified"
+14,Process,Flowchart Shapes,1,,,,,,"PROMOTIONS","id · code · discount_type · value · expires_at"
+15,Line,Flowchart Shapes,1,,2,3,None,Arrow,"1:N",
+16,Line,Flowchart Shapes,1,,2,8,None,Arrow,"1:N",
+17,Line,Flowchart Shapes,1,,2,11,None,Arrow,"1:1",
+18,Line,Flowchart Shapes,1,,2,13,None,Arrow,"1:N",
+19,Line,Flowchart Shapes,1,,7,4,None,Arrow,"1:N",
+20,Line,Flowchart Shapes,1,,4,5,None,Arrow,"1:N",
+21,Line,Flowchart Shapes,1,,4,13,None,Arrow,"1:N",
+22,Line,Flowchart Shapes,1,,6,4,None,Arrow,"1:N",
+23,Line,Flowchart Shapes,1,,6,6,None,Arrow,"self",
+24,Line,Flowchart Shapes,1,,8,9,None,Arrow,"1:N",
+25,Line,Flowchart Shapes,1,,8,10,None,Arrow,"1:1",
+26,Line,Flowchart Shapes,1,,5,9,None,Arrow,"1:N",
+27,Line,Flowchart Shapes,1,,11,12,None,Arrow,"1:N",
+28,Line,Flowchart Shapes,1,,5,12,None,Arrow,"1:N",

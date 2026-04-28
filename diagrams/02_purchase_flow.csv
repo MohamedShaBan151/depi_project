@@ -1,0 +1,38 @@
+Id,Name,Shape Library,Page ID,Contained By,Line Source,Line Destination,Source Arrow,Destination Arrow,Text Area 1,Text Area 2
+1,Page,,,,,,,,"Purchase Flow",
+2,Swim Lane,Flowchart Shapes,1,,,,,,"Customer",
+3,Swim Lane,Flowchart Shapes,1,,,,,,"Frontend",
+4,Swim Lane,Flowchart Shapes,1,,,,,,"Backend Services",
+5,Swim Lane,Flowchart Shapes,1,,,,,,"Data Layer",
+6,Terminator,Flowchart Shapes,1,2,,,,,,"Start","User opens Noon app"
+7,Process,Flowchart Shapes,1,2,,,,,,"Browse / Search","Enter keywords or browse"
+8,Process,Flowchart Shapes,1,3,,,,,,"Load Product Page","Fetch details + images"
+9,Process,Flowchart Shapes,1,4,,,,,,"Product Service","Return product data"
+10,Process,Flowchart Shapes,1,2,,,,,,"Add to Cart","Select qty & variant"
+11,Process,Flowchart Shapes,1,4,,,,,,"Cart Service","Persist cart in Redis"
+12,Process,Flowchart Shapes,1,2,,,,,,"View Cart","Review items"
+13,Process,Flowchart Shapes,1,2,,,,,,"Checkout","Enter address & payment"
+14,Process,Flowchart Shapes,1,4,,,,,,"Order Service","Create order record"
+15,Process,Flowchart Shapes,1,4,,,,,,"Payment Service","Charge card / BNPL"
+16,Decision,Flowchart Shapes,1,4,,,,,,"Payment OK?",
+17,Process,Flowchart Shapes,1,4,,,,,,"Inventory Service","Reserve stock"
+18,Process,Flowchart Shapes,1,4,,,,,,"Notification Service","Confirm email + SMS"
+19,Process,Flowchart Shapes,1,5,,,,,,"PostgreSQL","Write order row"
+20,Terminator,Flowchart Shapes,1,2,,,,,,"End","Order confirmed"
+21,Process,Flowchart Shapes,1,3,,,,,,"Show Error","Payment failed UI"
+22,Line,Flowchart Shapes,1,,6,7,None,Arrow,,
+23,Line,Flowchart Shapes,1,,7,8,None,Arrow,,
+24,Line,Flowchart Shapes,1,,8,9,None,Arrow,,
+25,Line,Flowchart Shapes,1,,9,8,None,Arrow,,
+26,Line,Flowchart Shapes,1,,7,10,None,Arrow,,
+27,Line,Flowchart Shapes,1,,10,11,None,Arrow,,
+28,Line,Flowchart Shapes,1,,11,12,None,Arrow,,
+29,Line,Flowchart Shapes,1,,12,13,None,Arrow,,
+30,Line,Flowchart Shapes,1,,13,14,None,Arrow,,
+31,Line,Flowchart Shapes,1,,14,15,None,Arrow,,
+32,Line,Flowchart Shapes,1,,15,16,None,Arrow,,
+33,Line,Flowchart Shapes,1,,16,17,None,Arrow,"Yes",
+34,Line,Flowchart Shapes,1,,17,19,None,Arrow,,
+35,Line,Flowchart Shapes,1,,17,18,None,Arrow,,
+36,Line,Flowchart Shapes,1,,18,20,None,Arrow,,
+37,Line,Flowchart Shapes,1,,16,21,None,Arrow,"No",

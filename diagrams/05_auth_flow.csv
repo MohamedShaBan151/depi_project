@@ -1,0 +1,40 @@
+Id,Name,Shape Library,Page ID,Contained By,Line Source,Line Destination,Source Arrow,Destination Arrow,Text Area 1,Text Area 2
+1,Page,,,,,,,,"Auth Flow",
+2,Swim Lane,Flowchart Shapes,1,,,,,,"Client App",
+3,Swim Lane,Flowchart Shapes,1,,,,,,"API Gateway",
+4,Swim Lane,Flowchart Shapes,1,,,,,,"Auth Service",
+5,Swim Lane,Flowchart Shapes,1,,,,,,"Data Store",
+6,Terminator,Flowchart Shapes,1,2,,,,,,"User Enters Credentials","Email + Password"
+7,Process,Flowchart Shapes,1,2,,,,,,"POST /auth/login","HTTPS request"
+8,Process,Flowchart Shapes,1,3,,,,,,"Validate Request","Rate limit · HTTPS check"
+9,Process,Flowchart Shapes,1,4,,,,,,"Lookup User","Query by email"
+10,Process,Flowchart Shapes,1,5,,,,,,"PostgreSQL","users table"
+11,Decision,Flowchart Shapes,1,4,,,,,,"User Found?",
+12,Process,Flowchart Shapes,1,4,,,,,,"Verify bcrypt Hash","Compare password"
+13,Decision,Flowchart Shapes,1,4,,,,,,"Password Match?",
+14,Process,Flowchart Shapes,1,4,,,,,,"Generate JWT","Access token 15m · Refresh 30d"
+15,Process,Flowchart Shapes,1,5,,,,,,"Redis","Store refresh token"
+16,Process,Flowchart Shapes,1,2,,,,,,"Store Tokens","LocalStorage / SecureStore"
+17,Process,Flowchart Shapes,1,3,,,,,,"Attach Bearer Token","Authorization header"
+18,Process,Flowchart Shapes,1,3,,,,,,"Verify JWT Signature","RS256 public key"
+19,Decision,Flowchart Shapes,1,3,,,,,,"Token Valid?",
+20,Process,Flowchart Shapes,1,3,,,,,,"Forward to Service","Pass user context"
+21,Process,Flowchart Shapes,1,2,,,,,,"401 Unauthorized","Show login screen"
+22,Process,Flowchart Shapes,1,4,,,,,,"Return 401","Invalid credentials"
+23,Line,Flowchart Shapes,1,,6,7,None,Arrow,,
+24,Line,Flowchart Shapes,1,,7,8,None,Arrow,,
+25,Line,Flowchart Shapes,1,,8,9,None,Arrow,,
+26,Line,Flowchart Shapes,1,,9,10,None,Arrow,,
+27,Line,Flowchart Shapes,1,,10,11,None,Arrow,,
+28,Line,Flowchart Shapes,1,,11,12,None,Arrow,"Yes",
+29,Line,Flowchart Shapes,1,,11,22,None,Arrow,"No",
+30,Line,Flowchart Shapes,1,,12,13,None,Arrow,,
+31,Line,Flowchart Shapes,1,,13,14,None,Arrow,"Yes",
+32,Line,Flowchart Shapes,1,,13,22,None,Arrow,"No",
+33,Line,Flowchart Shapes,1,,14,15,None,Arrow,,
+34,Line,Flowchart Shapes,1,,14,16,None,Arrow,,
+35,Line,Flowchart Shapes,1,,16,17,None,Arrow,,
+36,Line,Flowchart Shapes,1,,17,18,None,Arrow,,
+37,Line,Flowchart Shapes,1,,18,19,None,Arrow,,
+38,Line,Flowchart Shapes,1,,19,20,None,Arrow,"Valid",
+39,Line,Flowchart Shapes,1,,19,21,None,Arrow,"Expired",

@@ -1,0 +1,38 @@
+Id,Name,Shape Library,Page ID,Contained By,Line Source,Line Destination,Source Arrow,Destination Arrow,Text Area 1,Text Area 2
+1,Page,,,,,,,,"System Architecture Overview",
+2,Process,Flowchart Shapes,1,,,,,,"Web App","Client"
+3,Process,Flowchart Shapes,1,,,,,,"iOS App","Client"
+4,Process,Flowchart Shapes,1,,,,,,"Android App","Client"
+5,Process,Flowchart Shapes,1,,,,,,"CDN","CloudFront / Akamai"
+6,Process,Flowchart Shapes,1,,,,,,"WAF + DDoS","Shield / Cloudflare"
+7,Process,Flowchart Shapes,1,,,,,,"API Gateway","Rate limit · Auth · Route"
+8,Process,Flowchart Shapes,1,,,,,,"User Service","JWT · OAuth2"
+9,Process,Flowchart Shapes,1,,,,,,"Product Service","Catalog · Search"
+10,Process,Flowchart Shapes,1,,,,,,"Order Service","Cart · Checkout"
+11,Process,Flowchart Shapes,1,,,,,,"Payment Service","Stripe · Tabby"
+12,Process,Flowchart Shapes,1,,,,,,"Notification Service","Email · SMS · Push"
+13,Process,Flowchart Shapes,1,,,,,,"Delivery Service","Tracking · ETA"
+14,Process,Flowchart Shapes,1,,,,,,"PostgreSQL","Users · Orders"
+15,Process,Flowchart Shapes,1,,,,,,"MongoDB","Products · Catalog"
+16,Process,Flowchart Shapes,1,,,,,,"Redis","Sessions · Cache"
+17,Process,Flowchart Shapes,1,,,,,,"Elasticsearch","Search Index"
+18,Process,Flowchart Shapes,1,,,,,,"Kafka","Event Bus"
+19,Line,Flowchart Shapes,1,,2,5,None,Arrow,,
+20,Line,Flowchart Shapes,1,,3,5,None,Arrow,,
+21,Line,Flowchart Shapes,1,,4,5,None,Arrow,,
+22,Line,Flowchart Shapes,1,,5,6,None,Arrow,,
+23,Line,Flowchart Shapes,1,,6,7,None,Arrow,,
+24,Line,Flowchart Shapes,1,,7,8,None,Arrow,,
+25,Line,Flowchart Shapes,1,,7,9,None,Arrow,,
+26,Line,Flowchart Shapes,1,,7,10,None,Arrow,,
+27,Line,Flowchart Shapes,1,,7,11,None,Arrow,,
+28,Line,Flowchart Shapes,1,,7,12,None,Arrow,,
+29,Line,Flowchart Shapes,1,,7,13,None,Arrow,,
+30,Line,Flowchart Shapes,1,,8,14,None,Arrow,,
+31,Line,Flowchart Shapes,1,,9,15,None,Arrow,,
+32,Line,Flowchart Shapes,1,,9,17,None,Arrow,,
+33,Line,Flowchart Shapes,1,,10,14,None,Arrow,,
+34,Line,Flowchart Shapes,1,,8,16,None,Arrow,,
+35,Line,Flowchart Shapes,1,,10,18,None,Arrow,,
+36,Line,Flowchart Shapes,1,,11,18,None,Arrow,,
+37,Line,Flowchart Shapes,1,,12,18,None,Arrow,,
