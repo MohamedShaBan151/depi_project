@@ -1,42 +1,26 @@
-import 'package:depi_project/appColors.dart';
+import 'package:depi_project/const/appColors.dart';
+import 'package:depi_project/screens/categories.dart';
+import 'package:depi_project/screens/home_screen.dart';
+import 'package:depi_project/screens/profile.dart';
+import 'package:depi_project/screens/wishlist.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
-class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
-  static const String routeName = '/home';
+class BottomNavBar extends StatefulWidget {
+  const BottomNavBar({super.key});
+  static const String routeName = '/bottomNavBar';
 
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
+  State<BottomNavBar> createState() => _BottomNavBarState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _BottomNavBarState extends State<BottomNavBar> {
   int currentIndex = 0;
   List<Widget> pages = [
-    Container(
-      width: double.infinity,
-      height: double.infinity,
-      color: Colors.yellow,
-      child: const Center(child: Text('Home Screen')),
-    ),
-    Container(
-      width: double.infinity,
-      height: double.infinity,
-      color: Colors.green,
-      child: const Center(child: Text('Settings Screen')),
-    ),
-    Container(
-      width: double.infinity,
-      height: double.infinity,
-      color: Colors.yellow,
-      child: const Center(child: Text('Home Screen')),
-    ),
-    Container(
-      width: double.infinity,
-      height: double.infinity,
-      color: Colors.blue,
-      child: const Center(child: Text('Profile Screen')),
-    ),
+    const HomeScreen(),
+    const Categories(),
+    const Wishlist(),
+    const Profile(),
   ];
   @override
   Widget build(BuildContext context) {
@@ -47,7 +31,7 @@ class _HomeScreenState extends State<HomeScreen> {
           selectedFontSize: 0, // removes the label spacing
           unselectedFontSize: 0,
           type: BottomNavigationBarType.fixed,
-          backgroundColor: Color(0xff004182),
+          backgroundColor: AppColors.primaryColor,
           currentIndex: currentIndex,
           onTap: (value) => setState(() => currentIndex = value),
           items: [
