@@ -7,7 +7,6 @@ import '../../features/auth/presentation/screens/register_screen.dart';
 import '../../features/products/presentation/screens/home_screen.dart';
 import '../../features/products/presentation/screens/cart_screen.dart';
 import '../../features/products/presentation/screens/search_screen.dart';
-import '../../features/products/presentation/screens/account_screen.dart';
 import '../../features/products/presentation/screens/profile_screen.dart';
 import '../../features/products/presentation/screens/product_list_screen.dart';
 import '../../features/products/presentation/screens/product_details_screen.dart';

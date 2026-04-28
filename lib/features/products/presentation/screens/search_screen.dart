@@ -171,7 +171,7 @@ class _SearchSuggestions extends StatelessWidget {
             crossAxisCount: 4,
             mainAxisSpacing: 12,
             crossAxisSpacing: 12,
-            children: [
+            children: const [
               _CategoryTile(icon: Icons.devices, label: 'Electronics'),
               _CategoryTile(icon: Icons.checkroom, label: 'Fashion'),
               _CategoryTile(icon: Icons.home, label: 'Home'),

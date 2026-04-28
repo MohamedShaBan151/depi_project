@@ -322,7 +322,7 @@ class _QuickAction extends StatelessWidget {
         children: [
           Container(
             padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
               color: AppColors.lightGold,
               shape: BoxShape.circle,
             ),
