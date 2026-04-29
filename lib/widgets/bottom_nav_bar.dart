@@ -1,10 +1,13 @@
-import 'package:depi_project/const/appColors.dart';
-import 'package:depi_project/screens/categories.dart';
-import 'package:depi_project/screens/home_screen.dart';
-import 'package:depi_project/screens/profile.dart';
-import 'package:depi_project/screens/wishlist.dart';
+
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+
+import 'package:noon_clone/const/appColors.dart';
+
+import 'package:noon_clone/screens/categories.dart';
+import 'package:noon_clone/screens/home_screen.dart';
+import 'package:noon_clone/screens/profile.dart';
+import 'package:noon_clone/screens/wishlist.dart';
 
 class BottomNavBar extends StatefulWidget {
   const BottomNavBar({super.key});
@@ -22,6 +25,8 @@ class _BottomNavBarState extends State<BottomNavBar> {
     const Wishlist(),
     const Profile(),
   ];
+  
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
