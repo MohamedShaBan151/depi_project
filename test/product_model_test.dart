@@ -4,7 +4,7 @@ import 'package:noon_clone/features/products/models/product_model.dart';
 void main() {
   group('ProductModel.toEntity (Bug #15)', () {
     test('preserves originalPrice', () {
-      const model = ProductModel(
+      final model = const ProductModel(
         id: 'e1', name: 'Test', price: 100,
         category: 'Electronics', stock: 5, imageUrl: '',
         originalPrice: 150,
@@ -14,7 +14,7 @@ void main() {
     });
 
     test('preserves rating', () {
-      const model = ProductModel(
+      final model = const ProductModel(
         id: 'e1', name: 'Test', price: 100,
         category: 'Electronics', stock: 5, imageUrl: '',
         rating: 4.7,
@@ -23,7 +23,7 @@ void main() {
     });
 
     test('preserves isFeatured', () {
-      const model = ProductModel(
+      final model = const ProductModel(
         id: 'e1', name: 'Test', price: 100,
         category: 'Electronics', stock: 5, imageUrl: '',
         isFeatured: true,
@@ -32,7 +32,7 @@ void main() {
     });
 
     test('preserves stock', () {
-      const model = ProductModel(
+      final model = const ProductModel(
         id: 'e1', name: 'Test', price: 100,
         category: 'Electronics', stock: 42, imageUrl: '',
       );

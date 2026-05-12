@@ -1,14 +1,22 @@
 // ─────────────────────────────────────────────────────────────────────────────
-// shopping_cubit.dart  –  Single Cubit that owns Cart + Wishlist
+// shopping_cubit.dart  –  Cart + Wishlist  (with cart persistence)
 //
-// Keeping both concerns in one class avoids BlocProvider duplication and
-// lets the cart badge & wishlist icon react to the same state snapshot.
+// Cart mutations are immediately persisted to SharedPreferences via
+// CartPersistenceService so the basket survives app restarts.
+//
+// Usage in main.dart:
+//   final prefs = await SharedPreferences.getInstance();
+//   BlocProvider(
+//     create: (_) => ShoppingCubit(CartPersistenceService(prefs))
+//                       ..loadPersistedCart(),
+//   )
 // ─────────────────────────────────────────────────────────────────────────────
 
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../data/models/models.dart' show CartItem, Product;
+import '../data/data_sources/cart_persistence_service.dart';
 
 // ── State ─────────────────────────────────────────────────────────────────────
 
@@ -32,6 +40,14 @@ class ShoppingState extends Equatable {
 
   bool isWishlisted(String productId) => wishlist.any((p) => p.id == productId);
 
+  /// Free-shipping threshold (SAR).  Drives the progress bar.
+  static const double freeShippingThreshold = 200.0;
+
+  double get freeShippingProgress =>
+      (cartTotal / freeShippingThreshold).clamp(0.0, 1.0);
+
+  bool get qualifiesForFreeShipping => cartTotal >= freeShippingThreshold;
+
   // ── copyWith ───────────────────────────────────────────────────────────────
 
   ShoppingState copyWith({
@@ -50,7 +66,22 @@ class ShoppingState extends Equatable {
 // ── Cubit ─────────────────────────────────────────────────────────────────────
 
 class ShoppingCubit extends Cubit<ShoppingState> {
-  ShoppingCubit() : super(const ShoppingState());
+  /// Pass [null] in tests to skip persistence entirely.
+  final CartPersistenceService? _persistence;
+
+  ShoppingCubit([this._persistence]) : super(const ShoppingState());
+
+  // ── Lifecycle ──────────────────────────────────────────────────────────────
+
+  /// Rehydrates the cart from SharedPreferences.
+  /// Call once after the cubit is created (done in main.dart).
+  void loadPersistedCart(){
+    if (_persistence == null) return;
+    final saved = _persistence?.loadCart();
+    if (saved!.isNotEmpty) {
+      emit(state.copyWith(cartItems: saved));
+    }
+  }
 
   // ── Cart ───────────────────────────────────────────────────────────────────
 
@@ -64,7 +95,7 @@ class ShoppingCubit extends Cubit<ShoppingState> {
     } else {
       items.add(CartItem(product: product));
     }
-    emit(state.copyWith(cartItems: items));
+    _emitAndPersist(state.copyWith(cartItems: items));
   }
 
   /// Decrements quantity; removes the item when quantity reaches 0.
@@ -78,17 +109,17 @@ class ShoppingCubit extends Cubit<ShoppingState> {
     } else {
       items.removeAt(idx);
     }
-    emit(state.copyWith(cartItems: items));
+    _emitAndPersist(state.copyWith(cartItems: items));
   }
 
   /// Removes all units of a product in one call.
   void deleteFromCart(String productId) {
     final items =
         state.cartItems.where((i) => i.product.id != productId).toList();
-    emit(state.copyWith(cartItems: items));
+    _emitAndPersist(state.copyWith(cartItems: items));
   }
 
-  void clearCart() => emit(state.copyWith(cartItems: []));
+  void clearCart() => _emitAndPersist(state.copyWith(cartItems: []));
 
   // ── Wishlist ───────────────────────────────────────────────────────────────
 
@@ -102,5 +133,12 @@ class ShoppingCubit extends Cubit<ShoppingState> {
       list.add(product);
     }
     emit(state.copyWith(wishlist: list));
+  }
+
+  // ── Private ────────────────────────────────────────────────────────────────
+
+  void _emitAndPersist(ShoppingState newState) {
+    emit(newState);
+    _persistence?.saveCart(newState.cartItems); // fire-and-forget is fine
   }
 }
