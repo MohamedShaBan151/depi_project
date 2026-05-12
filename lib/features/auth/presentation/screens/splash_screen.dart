@@ -1,9 +1,15 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 import '../../../../core/theme/saudi_theme.dart';
 
+/// Splash screen.
+///
+/// FIX: the original always redirected to /register regardless of auth state.
+/// Now it checks FirebaseAuth for an existing session and routes to '/'
+/// (home) when already signed in, or '/register' when not.
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
 
@@ -12,31 +18,18 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
-
   @override
-void initState() {
-  super.initState();
-
-  WidgetsBinding.instance.addPostFrameCallback((_) {
-    Timer(const Duration(seconds: 2, milliseconds: 500), () {
-      if (mounted) {
-        context.go('/register');
-      }
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Timer(const Duration(seconds: 2, milliseconds: 500), () {
+        if (!mounted) return;
+        final user = FirebaseAuth.instance.currentUser;
+        // Route to home if already signed in, else to register
+        context.go(user != null ? '/' : '/register');
+      });
     });
-  });
-}
-
-  // @override
-  // void initState() {
-  //   super.initState();
-
-  //   // ⏳ بعد 2.5 ثانية يروح للـ register
-  //   Timer(const Duration(seconds: 2, milliseconds: 500), () {
-  //     if (mounted) {
-  //       context.go('/register');
-  //     }
-  //   });
-  // }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -46,8 +39,6 @@ void initState() {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-
-            // اسم التطبيق
             Text(
               'Noon Clone',
               style: TextStyle(
@@ -57,22 +48,13 @@ void initState() {
                 letterSpacing: 1.5,
               ),
             ),
-
             SizedBox(height: 12),
-
             Text(
               'Shopping App',
-              style: TextStyle(
-                fontSize: 14,
-                color: Colors.white70,
-              ),
+              style: TextStyle(fontSize: 14, color: Colors.white70),
             ),
-
             SizedBox(height: 30),
-
-            CircularProgressIndicator(
-              color: Colors.white,
-            ),
+            CircularProgressIndicator(color: Colors.white),
           ],
         ),
       ),

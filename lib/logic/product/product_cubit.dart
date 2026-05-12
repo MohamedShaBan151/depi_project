@@ -1,1 +1,2 @@
-// TODO Implement this library.
+// Thin re-export so lib/screens/home_screen.dart can import from this path.
+export '../../features/products/presentation/cubit/product_cubit.dart';

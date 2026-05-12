@@ -7,6 +7,10 @@ class ProductModel {
   final String category;
   final int stock;
   final String imageUrl;
+  final double? originalPrice;
+  final double rating;
+  final int reviewCount;
+  final bool isFeatured;
 
   const ProductModel({
     required this.id,
@@ -15,34 +19,37 @@ class ProductModel {
     required this.category,
     required this.stock,
     required this.imageUrl,
+    this.originalPrice,
+    this.rating = 4.0,
+    this.reviewCount = 0,
+    this.isFeatured = false,
   });
 
   /// Firestore factory – only used with live Firebase.
-  // factory ProductModel.fromDoc(DocumentSnapshot doc) {
-  //   final data = doc.data() as Map<String, dynamic>;
-  //   return ProductModel(
-  //     id: doc.id,
-  //     name: data['name'] ?? '',
-  //     price: (data['price'] ?? 0).toDouble(),
-  //     category: data['category'] ?? '',
-  //     stock: data['stock'] ?? 0,
-  //     imageUrl: data['imageUrl'] ?? '',
-  //   );
-  // }
+  // factory ProductModel.fromDoc(DocumentSnapshot doc) { ... }
 
   Map<String, dynamic> toJson() => {
-    'name': name,
-    'price': price,
-    'category': category,
-    'stock': stock,
-    'imageUrl': imageUrl,
-  };
+        'name': name,
+        'price': price,
+        'category': category,
+        'stock': stock,
+        'imageUrl': imageUrl,
+        'originalPrice': originalPrice,
+        'rating': rating,
+        'reviewCount': reviewCount,
+        'isFeatured': isFeatured,
+      };
 
   Product toEntity() => Product(
-    id: id,
-    name: name,
-    price: price,
-    category: category,
-    imageUrl: imageUrl,
-  );
+        id: id,
+        name: name,
+        price: price,
+        category: category,
+        imageUrl: imageUrl,
+        stock: stock,
+        originalPrice: originalPrice,
+        rating: rating,
+        reviewCount: reviewCount,
+        isFeatured: isFeatured,
+      );
 }
