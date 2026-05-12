@@ -16,7 +16,6 @@ import 'features/products/data/product_service.dart';
 import 'features/products/presentation/cubit/product_cubit.dart';
 import 'features/products/presentation/cubit/order_cubit.dart';
 
-// 👇 إضافة السplash
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 

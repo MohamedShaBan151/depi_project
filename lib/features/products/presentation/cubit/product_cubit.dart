@@ -48,4 +48,6 @@ class ProductCubit extends Cubit<ProductState> {
     _subscription?.cancel();
     return super.close();
   }
+
+  void loadAll() {}
 }
