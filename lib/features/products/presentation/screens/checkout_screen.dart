@@ -1,15 +1,3 @@
-// ─────────────────────────────────────────────────────────────────────────────
-// checkout_screen.dart
-//
-// Three-step stepper: Address → Delivery → Payment.
-//
-// KEY FIX: _placeOrder() now:
-//   1. Validates that an address is selected.
-//   2. Calls OrderCubit.createOrder() so the order appears in Order History.
-//   3. Calls ShoppingCubit.clearCart() which also wipes SharedPreferences.
-//   4. Navigates to /order-confirmation with the real order-id + total.
-// ─────────────────────────────────────────────────────────────────────────────
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -17,7 +5,10 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/theme/saudi_theme.dart';
 import '../../../../cubits/shopping_cubit.dart';
 import '../../../auth/data/models/user_model.dart' show FirestoreAddress;
+import '../../../auth/presentation/cubit/auth_cubit.dart';
+import '../../data/address_service.dart';
 import '../../data/models/order_model.dart';
+import '../../data/models/coupon_model.dart';
 import '../../data/payment_gateway.dart';
 import '../cubit/order_cubit.dart';
 
@@ -35,29 +26,49 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   String _selectedPayment = 'cod';
   bool _isProcessing = false;
 
-  final List<Map<String, dynamic>> _addresses = [
-    {
-      'id': '1',
-      'label': 'المنزل',
-      'address': 'الرياض، حي النرجس، شارع العلياء',
-      'city': 'الرياض',
-    },
-    {
-      'id': '2',
-      'label': 'العمل',
-      'address': 'الرياض، حي المالحة، برج الفهد',
-      'city': 'الرياض',
-    },
-  ];
+  List<FirestoreAddress> _addresses = [];
+  final _couponController = TextEditingController();
+  Coupon? _appliedCoupon;
+  double _discount = 0;
 
-  // Delivery fee table  (SAR)
-  static const _deliveryFees = {
-    'delivery': 0.0,
-    'pickup': 0.0,
-    'express': 15.0,
-  };
-
+  static const _deliveryFees = {'delivery': 0.0, 'pickup': 0.0, 'express': 15.0};
   double get _deliveryFee => _deliveryFees[_selectedDelivery] ?? 0.0;
+
+  @override
+  void initState() {
+    super.initState();
+    _addresses = AddressService.loadAddresses();
+    if (_addresses.isNotEmpty) {
+      final defaultAddr = _addresses.where((a) => a.isDefault).firstOrNull ?? _addresses.first;
+      _selectedAddress = defaultAddr.id;
+    }
+  }
+
+  @override
+  void dispose() {
+    _couponController.dispose();
+    super.dispose();
+  }
+
+  void _applyCoupon() {
+    final code = _couponController.text.trim();
+    if (code.isEmpty) return;
+    final coupon = CouponService.validateCoupon(code);
+    if (coupon != null) {
+      setState(() {
+        _appliedCoupon = coupon;
+        _discount = coupon.getDiscountAmount(context.read<ShoppingCubit>().state.cartTotal);
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Coupon applied! You save SAR ${_discount.toStringAsFixed(2)}'),
+            backgroundColor: AppColors.success),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Invalid or expired coupon'), backgroundColor: Colors.red),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -72,7 +83,6 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
       body: BlocBuilder<ShoppingCubit, ShoppingState>(
         builder: (context, state) {
           if (state.cartItems.isEmpty) return _buildEmptyCart();
-
           return Stepper(
             type: StepperType.horizontal,
             currentStep: _currentStep,
@@ -81,53 +91,37 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
             controlsBuilder: (context, details) {
               return Padding(
                 padding: const EdgeInsets.only(top: 16),
-                child: Row(
-                  children: [
-                    if (_currentStep > 0)
-                      TextButton(
-                        onPressed: details.onStepCancel,
-                        child: const Text('Back'),
-                      ),
-                    const Spacer(),
-                    _isProcessing
-                        ? const SizedBox(
-                            width: 24,
-                            height: 24,
-                            child: CircularProgressIndicator(strokeWidth: 2),
-                          )
-                        : ElevatedButton(
-                            onPressed: details.onStepContinue,
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: AppColors.darkGreen,
-                              foregroundColor: Colors.white,
-                            ),
-                            child: Text(
-                              _currentStep == 2 ? 'تأكيد الطلب' : 'Continue',
-                            ),
+                child: Row(children: [
+                  if (_currentStep > 0)
+                    TextButton(
+                      onPressed: details.onStepCancel,
+                      child: const Text('Back'),
+                    ),
+                  const Spacer(),
+                  _isProcessing
+                      ? const SizedBox(width: 24, height: 24,
+                          child: CircularProgressIndicator(strokeWidth: 2))
+                      : ElevatedButton(
+                          onPressed: details.onStepContinue,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppColors.darkGreen,
+                            foregroundColor: Colors.white,
                           ),
-                  ],
-                ),
+                          child: Text(_currentStep == 2 ? 'تأكيد الطلب' : 'Continue'),
+                        ),
+                ]),
               );
             },
             steps: [
-              Step(
-                title: const Text('Address'),
-                content: _buildAddressStep(),
-                isActive: _currentStep >= 0,
-                state: _currentStep > 0 ? StepState.complete : StepState.indexed,
-              ),
-              Step(
-                title: const Text('Delivery'),
-                content: _buildDeliveryStep(state),
-                isActive: _currentStep >= 1,
-                state: _currentStep > 1 ? StepState.complete : StepState.indexed,
-              ),
-              Step(
-                title: const Text('Payment'),
-                content: _buildPaymentStep(state),
-                isActive: _currentStep >= 2,
-                state: _currentStep > 2 ? StepState.complete : StepState.indexed,
-              ),
+              Step(title: const Text('Address'), content: _buildAddressStep(),
+                  isActive: _currentStep >= 0,
+                  state: _currentStep > 0 ? StepState.complete : StepState.indexed),
+              Step(title: const Text('Delivery'), content: _buildDeliveryStep(state),
+                  isActive: _currentStep >= 1,
+                  state: _currentStep > 1 ? StepState.complete : StepState.indexed),
+              Step(title: const Text('Payment'), content: _buildPaymentStep(state),
+                  isActive: _currentStep >= 2,
+                  state: _currentStep > 2 ? StepState.complete : StepState.indexed),
             ],
           );
         },
@@ -135,66 +129,48 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     );
   }
 
-  // ── Empty cart fallback ────────────────────────────────────────────────────
-
   Widget _buildEmptyCart() {
     return Center(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(
-            Icons.shopping_cart_outlined,
-            size: 80,
-            color: AppColors.darkGreen.withValues(alpha: 0.3),
+      child: Column(mainAxisSize: MainAxisSize.min, children: [
+        Icon(Icons.shopping_cart_outlined, size: 80,
+            color: AppColors.darkGreen.withValues(alpha: 0.3)),
+        const SizedBox(height: 16),
+        const Text('Your cart is empty',
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600)),
+        const SizedBox(height: 24),
+        ElevatedButton(
+          onPressed: () => context.go('/'),
+          style: ElevatedButton.styleFrom(
+            backgroundColor: AppColors.darkGreen, foregroundColor: Colors.white,
           ),
-          const SizedBox(height: 16),
-          const Text(
-            'Your cart is empty',
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
-          ),
-          const SizedBox(height: 24),
-          ElevatedButton(
-            onPressed: () => context.go('/'),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.darkGreen,
-              foregroundColor: Colors.white,
-            ),
-            child: const Text('Continue Shopping'),
-          ),
-        ],
-      ),
+          child: const Text('Continue Shopping'),
+        ),
+      ]),
     );
   }
-
-  // ── Step 1: Address ────────────────────────────────────────────────────────
 
   Widget _buildAddressStep() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text(
-          'اختر عنوان التوصيل',
-          style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
-        ),
-        const SizedBox(height: 16),
-        ..._addresses.map(_buildAddressCard),
-        const SizedBox(height: 16),
-        OutlinedButton.icon(
-          onPressed: () {},
-          icon: const Icon(Icons.add),
-          label: const Text('إضافة عنوان جديد'),
-          style: OutlinedButton.styleFrom(
-            minimumSize: const Size(double.infinity, 48),
-          ),
-        ),
-      ],
-    );
+    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      const Text('اختر عنوان التوصيل',
+          style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
+      const SizedBox(height: 16),
+      ...(_addresses.isEmpty
+          ? [const Text('No addresses saved. Please add an address.')]
+          : _addresses.map(_buildAddressCard)),
+      const SizedBox(height: 16),
+      OutlinedButton.icon(
+        onPressed: () => context.push('/addresses'),
+        icon: const Icon(Icons.add),
+        label: const Text('إدارة العناوين'),
+        style: OutlinedButton.styleFrom(minimumSize: const Size(double.infinity, 48)),
+      ),
+    ]);
   }
 
-  Widget _buildAddressCard(Map<String, dynamic> address) {
-    final isSelected = _selectedAddress == address['id'];
+  Widget _buildAddressCard(FirestoreAddress address) {
+    final isSelected = _selectedAddress == address.id;
     return GestureDetector(
-      onTap: () => setState(() => _selectedAddress = address['id'] as String),
+      onTap: () => setState(() => _selectedAddress = address.id),
       child: Container(
         margin: const EdgeInsets.only(bottom: 12),
         padding: const EdgeInsets.all(16),
@@ -206,66 +182,40 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
             width: isSelected ? 2 : 1,
           ),
         ),
-        child: Row(
-          children: [
-            _RadioCircle(selected: isSelected),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    address['label'] as String,
-                    style: const TextStyle(fontWeight: FontWeight.w700),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    address['address'] as String,
-                    style: const TextStyle(
-                      color: AppColors.textSecondary,
-                      fontSize: 13,
-                    ),
-                  ),
-                  Text(
-                    address['city'] as String,
-                    style: const TextStyle(
-                      color: AppColors.textSecondary,
-                      fontSize: 13,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
+        child: Row(children: [
+          _RadioCircle(selected: isSelected),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Text(address.label, style: const TextStyle(fontWeight: FontWeight.w700)),
+              const SizedBox(height: 4),
+              Text(address.address,
+                  style: const TextStyle(color: AppColors.textSecondary, fontSize: 13)),
+              Text('${address.city}, ${address.district}',
+                  style: const TextStyle(color: AppColors.textSecondary, fontSize: 13)),
+            ]),
+          ),
+        ]),
       ),
     );
   }
 
-  // ── Step 2: Delivery ───────────────────────────────────────────────────────
-
   Widget _buildDeliveryStep(ShoppingState state) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text(
-          'اختر طريقة التوصيل',
-          style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
-        ),
-        const SizedBox(height: 16),
-        _buildDeliveryOption('توصيل منزلي', 'Free', '2-4 أيام', 'delivery'),
-        const SizedBox(height: 12),
-        _buildDeliveryOption('استلام من المتجر', 'Free', 'غداً', 'pickup'),
-        const SizedBox(height: 12),
-        _buildDeliveryOption('توصيل في نفس اليوم', 'ر.س15', 'اليوم', 'express'),
-        const SizedBox(height: 24),
-        _buildOrderSummaryCard(state),
-      ],
-    );
+    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      const Text('اختر طريقة التوصيل',
+          style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
+      const SizedBox(height: 16),
+      _buildDeliveryOption('توصيل منزلي', 'Free', '2-4 أيام', 'delivery'),
+      const SizedBox(height: 12),
+      _buildDeliveryOption('استلام من المتجر', 'Free', 'غداً', 'pickup'),
+      const SizedBox(height: 12),
+      _buildDeliveryOption('توصيل في نفس اليوم', 'ر.س15', 'اليوم', 'express'),
+      const SizedBox(height: 24),
+      _buildOrderSummaryCard(state),
+    ]);
   }
 
-  Widget _buildDeliveryOption(
-      String title, String price, String time, String value) {
+  Widget _buildDeliveryOption(String title, String price, String time, String value) {
     final isSelected = _selectedDelivery == value;
     return GestureDetector(
       onTap: () => setState(() => _selectedDelivery = value),
@@ -279,115 +229,124 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
             width: isSelected ? 2 : 1,
           ),
         ),
-        child: Row(
-          children: [
-            _RadioCircle(selected: isSelected),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(title,
-                      style: const TextStyle(fontWeight: FontWeight.w600)),
-                  Text(time,
-                      style: const TextStyle(
-                          color: AppColors.textSecondary, fontSize: 12)),
-                ],
-              ),
-            ),
-            Text(
-              price,
-              style: TextStyle(
-                fontWeight: FontWeight.w700,
-                color: price == 'Free' ? AppColors.success : AppColors.ink,
-              ),
-            ),
-          ],
-        ),
+        child: Row(children: [
+          _RadioCircle(selected: isSelected),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Text(title, style: const TextStyle(fontWeight: FontWeight.w600)),
+              Text(time, style: const TextStyle(color: AppColors.textSecondary, fontSize: 12)),
+            ]),
+          ),
+          Text(price, style: TextStyle(
+              fontWeight: FontWeight.w700,
+              color: price == 'Free' ? AppColors.success : AppColors.ink)),
+        ]),
       ),
     );
   }
 
   Widget _buildOrderSummaryCard(ShoppingState state) {
-    final total = state.cartTotal + _deliveryFee;
+    final total = state.cartTotal + _deliveryFee - _discount;
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: AppColors.lightGold.withValues(alpha: 0.3),
         borderRadius: BorderRadius.circular(12),
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Row(
-            children: [
-              Icon(Icons.local_shipping, size: 20, color: AppColors.darkGreen),
-              SizedBox(width: 8),
-              Text('ملخص الطلب',
-                  style: TextStyle(fontWeight: FontWeight.w600)),
-            ],
-          ),
-          const SizedBox(height: 12),
-          _summaryRow('المجموع الفرعي',
-              'ر.س${state.cartTotal.toStringAsFixed(2)}'),
-          const SizedBox(height: 8),
-          _summaryRow(
-            'التوصيل',
+      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        const Row(children: [
+          Icon(Icons.local_shipping, size: 20, color: AppColors.darkGreen),
+          SizedBox(width: 8),
+          Text('ملخص الطلب', style: TextStyle(fontWeight: FontWeight.w600)),
+        ]),
+        const SizedBox(height: 12),
+        _summaryRow('المجموع الفرعي', 'ر.س${state.cartTotal.toStringAsFixed(2)}'),
+        const SizedBox(height: 8),
+        _summaryRow('التوصيل',
             _deliveryFee == 0 ? 'Free' : 'ر.س${_deliveryFee.toStringAsFixed(0)}',
-            valueColor:
-                _deliveryFee == 0 ? AppColors.success : AppColors.ink,
-          ),
-          const Divider(height: 24),
-          _summaryRow(
-            'الإجمالي',
-            'ر.س${total.toStringAsFixed(2)}',
-            bold: true,
-            valueColor: AppColors.darkGreen,
-          ),
+            valueColor: _deliveryFee == 0 ? AppColors.success : AppColors.ink),
+        if (_discount > 0) ...[
+          const SizedBox(height: 8),
+          _summaryRow('الخصم', '-ر.س${_discount.toStringAsFixed(2)}',
+              valueColor: AppColors.error),
         ],
-      ),
+        const Divider(height: 24),
+        _summaryRow('الإجمالي', 'ر.س${total.toStringAsFixed(2)}',
+            bold: true, valueColor: AppColors.darkGreen),
+      ]),
     );
   }
 
   Widget _summaryRow(String label, String value,
       {bool bold = false, Color? valueColor}) {
-    final style = TextStyle(
-      fontWeight: bold ? FontWeight.w700 : FontWeight.normal,
-      color: valueColor,
-    );
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Text(label,
-            style: bold
-                ? const TextStyle(fontWeight: FontWeight.w700)
-                : null),
-        Text(value, style: style),
-      ],
-    );
+    return Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+      Text(label, style: bold ? const TextStyle(fontWeight: FontWeight.w700) : null),
+      Text(value, style: TextStyle(fontWeight: bold ? FontWeight.w700 : FontWeight.normal, color: valueColor)),
+    ]);
   }
 
-  // ── Step 3: Payment ────────────────────────────────────────────────────────
-
   Widget _buildPaymentStep(ShoppingState state) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text(
-          'اختر طريقة الدفع',
-          style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
-        ),
-        const SizedBox(height: 16),
-        _buildPaymentOption('الدفع عند الاستلام', 'cod', Icons.money),
-        const SizedBox(height: 12),
-        _buildPaymentOption('بطاقة الائتمان', 'card', Icons.credit_card),
-        const SizedBox(height: 12),
-        _buildPaymentOption('Apple Pay', 'apple', Icons.apple),
-        const SizedBox(height: 24),
-        if (_selectedPayment == 'card') _buildCardForm(),
-        const SizedBox(height: 16),
-        _buildOrderSummaryCard(state),
-      ],
+    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      const Text('اختر طريقة الدفع',
+          style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
+      const SizedBox(height: 16),
+      _buildPaymentOption('الدفع عند الاستلام', 'cod', Icons.money),
+      const SizedBox(height: 12),
+      _buildPaymentOption('بطاقة الائتمان', 'card', Icons.credit_card),
+      const SizedBox(height: 12),
+      _buildPaymentOption('Apple Pay', 'apple', Icons.apple),
+      const SizedBox(height: 24),
+      if (_selectedPayment == 'card') _buildCardForm(),
+      const SizedBox(height: 16),
+      _buildCouponSection(),
+      const SizedBox(height: 16),
+      _buildOrderSummaryCard(state),
+    ]);
+  }
+
+  Widget _buildCouponSection() {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        const Text('Coupon Code', style: TextStyle(fontWeight: FontWeight.w600)),
+        const SizedBox(height: 8),
+        Row(children: [
+          Expanded(
+            child: TextField(
+              controller: _couponController,
+              decoration: InputDecoration(
+                hintText: 'Enter coupon code',
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+                contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+              ),
+            ),
+          ),
+          const SizedBox(width: 8),
+          ElevatedButton(
+            onPressed: _applyCoupon,
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppColors.darkGreen,
+              foregroundColor: Colors.white,
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            ),
+            child: const Text('Apply'),
+          ),
+        ]),
+        if (_appliedCoupon != null) ...[
+          const SizedBox(height: 8),
+          Row(children: [
+            const Icon(Icons.check_circle, color: AppColors.success, size: 16),
+            const SizedBox(width: 4),
+            Text('${_appliedCoupon!.code} applied',
+                style: const TextStyle(color: AppColors.success, fontSize: 12)),
+          ]),
+        ],
+      ]),
     );
   }
 
@@ -405,15 +364,13 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
             width: isSelected ? 2 : 1,
           ),
         ),
-        child: Row(
-          children: [
-            _RadioCircle(selected: isSelected),
-            const SizedBox(width: 12),
-            Icon(icon, size: 24),
-            const SizedBox(width: 12),
-            Text(title, style: const TextStyle(fontWeight: FontWeight.w600)),
-          ],
-        ),
+        child: Row(children: [
+          _RadioCircle(selected: isSelected),
+          const SizedBox(width: 12),
+          Icon(icon, size: 24),
+          const SizedBox(width: 12),
+          Text(title, style: const TextStyle(fontWeight: FontWeight.w600)),
+        ]),
       ),
     );
   }
@@ -421,66 +378,48 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   Widget _buildCardForm() {
     return Container(
       padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Column(
-        children: [
-          TextField(
-            decoration: InputDecoration(
-              labelText: 'رقم البطاقة',
-              hintText: '**** **** **** ****',
-              prefixIcon: const Icon(Icons.credit_card),
-              border:
-                  OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+      decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(12)),
+      child: Column(children: [
+        TextField(
+          decoration: InputDecoration(
+            labelText: 'رقم البطاقة', hintText: '**** **** **** ****',
+            prefixIcon: const Icon(Icons.credit_card),
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+          ),
+          keyboardType: TextInputType.number,
+        ),
+        const SizedBox(height: 12),
+        Row(children: [
+          Expanded(
+            child: TextField(
+              decoration: InputDecoration(
+                labelText: 'تاريخ الانتهاء', hintText: 'MM/YY',
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+              ),
+              keyboardType: TextInputType.datetime,
             ),
-            keyboardType: TextInputType.number,
           ),
-          const SizedBox(height: 12),
-          Row(
-            children: [
-              Expanded(
-                child: TextField(
-                  decoration: InputDecoration(
-                    labelText: 'تاريخ الانتهاء',
-                    hintText: 'MM/YY',
-                    border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8)),
-                  ),
-                  keyboardType: TextInputType.datetime,
-                ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: TextField(
+              decoration: InputDecoration(
+                labelText: 'CVV', hintText: '***',
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
               ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: TextField(
-                  decoration: InputDecoration(
-                    labelText: 'CVV',
-                    hintText: '***',
-                    border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8)),
-                  ),
-                  keyboardType: TextInputType.number,
-                  obscureText: true,
-                ),
-              ),
-            ],
+              keyboardType: TextInputType.number,
+              obscureText: true,
+            ),
           ),
-        ],
-      ),
+        ]),
+      ]),
     );
   }
-
-  // ── Step navigation ────────────────────────────────────────────────────────
 
   void _handleContinue(ShoppingState state) {
     if (_currentStep == 0) {
       if (_selectedAddress == null) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('الرجاء اختيار عنوان التوصيل'),
-            backgroundColor: Colors.red,
-          ),
+          const SnackBar(content: Text('الرجاء اختيار عنوان التوصيل'), backgroundColor: Colors.red),
         );
         return;
       }
@@ -496,39 +435,38 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     if (_currentStep > 0) setState(() => _currentStep--);
   }
 
-  // ── Order placement ────────────────────────────────────────────────────────
-
   Future<void> _placeOrder(ShoppingState state) async {
     if (_isProcessing) return;
     setState(() => _isProcessing = true);
 
     try {
-      // Run payment simulation
       final paymentService = PaymentService(
         provider: _selectedPayment == 'cod'
             ? PaymentProvider.cod
             : PaymentProvider.paymob,
       );
       final result = await paymentService.processPayment(
-        amount: state.cartTotal + _deliveryFee,
+        amount: state.cartTotal + _deliveryFee - _discount,
         currency: 'SAR',
-        paymentMethod: {
-          'type': _selectedPayment,
-          'addressId': _selectedAddress,
-        },
+        paymentMethod: {'type': _selectedPayment, 'addressId': _selectedAddress},
       );
 
       if (!result.success) throw Exception(result.errorMessage ?? 'Payment failed');
 
-      // Build order model
       final selectedAddr = _addresses.firstWhere(
-        (a) => a['id'] == _selectedAddress,
+        (a) => a.id == _selectedAddress,
         orElse: () => _addresses.first,
       );
 
+      String userId = 'guest';
+      final authState = context.read<AuthCubit>().state;
+      if (authState is AuthAuthenticated && authState.user != null) {
+        userId = authState.user!.uid;
+      }
+
       final order = FirestoreOrder(
         id: result.transactionId ?? 'ORD${DateTime.now().millisecondsSinceEpoch}',
-        userId: 'current_user',
+        userId: userId,
         items: state.cartItems
             .map((ci) => OrderItem(
                   productId: ci.product.id,
@@ -540,16 +478,10 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
             .toList(),
         subtotal: state.cartTotal,
         deliveryFee: _deliveryFee,
-        total: state.cartTotal + _deliveryFee,
+        discount: _discount,
+        total: state.cartTotal + _deliveryFee - _discount,
         status: OrderStatus.confirmed,
-        shippingAddress: FirestoreAddress(
-          id: selectedAddr['id'] as String,
-          label: selectedAddr['label'] as String,
-          address: selectedAddr['address'] as String,
-          city: selectedAddr['city'] as String,
-          district: selectedAddr['city'] as String,
-          phone: '+966500000000',
-        ),
+        shippingAddress: selectedAddr,
         paymentInfo: PaymentInfo(
           method: _selectedPayment,
           transactionId: result.transactionId,
@@ -559,12 +491,9 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
         createdAt: DateTime.now(),
       );
 
-      // Register order in OrderCubit (order history)
       if (mounted) {
         context.read<OrderCubit>().createOrder(order);
-        // Clear cart (also wipes SharedPreferences)
         context.read<ShoppingCubit>().clearCart();
-        // Navigate to confirmation
         context.go(
           '/order-confirmation'
           '?orderId=${Uri.encodeComponent(order.id)}'
@@ -575,17 +504,12 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
       if (mounted) {
         setState(() => _isProcessing = false);
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('فشل الدفع: ${e.toString()}'),
-            backgroundColor: Colors.red,
-          ),
+          SnackBar(content: Text('فشل الدفع: ${e.toString()}'), backgroundColor: Colors.red),
         );
       }
     }
   }
 }
-
-// ── Helper widget ─────────────────────────────────────────────────────────────
 
 class _RadioCircle extends StatelessWidget {
   final bool selected;
@@ -594,8 +518,7 @@ class _RadioCircle extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 24,
-      height: 24,
+      width: 24, height: 24,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
         border: Border.all(

@@ -4,13 +4,11 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../core/theme/saudi_theme.dart';
 import '../../data/models/order_model.dart';
-import '../../data/models/firestore_product_model.dart';
 import '../cubit/order_cubit.dart';
 
 class OrderConfirmationScreen extends StatefulWidget {
   final String orderId;
   final double total;
-
   const OrderConfirmationScreen({
     super.key,
     required this.orderId,
@@ -23,25 +21,30 @@ class OrderConfirmationScreen extends StatefulWidget {
 
 class _OrderConfirmationScreenState extends State<OrderConfirmationScreen>
     with SingleTickerProviderStateMixin {
-  late AnimationController _controller;
-  late Animation<double> _scaleAnimation;
+  late AnimationController _animController;
+  late Animation<double> _scaleAnim;
+  bool _showDetails = false;
 
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(
-      duration: const Duration(milliseconds: 600),
+    _animController = AnimationController(
       vsync: this,
+      duration: const Duration(milliseconds: 800),
     );
-    _scaleAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.elasticOut),
-    );
-    _controller.forward();
+    _scaleAnim = CurvedAnimation(parent: _animController, curve: Curves.elasticOut);
+    _animController.forward();
+
+    Future.delayed(const Duration(milliseconds: 600), () {
+      if (mounted) setState(() => _showDetails = true);
+    });
+
+    context.read<OrderCubit>().watchOrder(widget.orderId);
   }
 
   @override
   void dispose() {
-    _controller.dispose();
+    _animController.dispose();
     super.dispose();
   }
 
@@ -49,269 +52,194 @@ class _OrderConfirmationScreenState extends State<OrderConfirmationScreen>
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.surface,
-      body: SafeArea(
-        child: Column(
-          children: [
-            Expanded(
-              child: Center(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    ScaleTransition(
-                      scale: _scaleAnimation,
-                      child: Container(
-                        width: 120,
-                        height: 120,
-                        decoration: BoxDecoration(
-                          color: AppColors.success,
-                          shape: BoxShape.circle,
-                          boxShadow: [
-                            BoxShadow(
-                              color: AppColors.success.withValues(alpha: 0.3),
-                              blurRadius: 30,
-                              spreadRadius: 10,
-                            ),
-                          ],
-                        ),
-                        child: const Icon(
-                          Icons.check,
-                          size: 60,
-                          color: Colors.white,
-                        ),
+      appBar: AppBar(
+        backgroundColor: AppColors.darkGreen,
+        foregroundColor: Colors.white,
+        title: const Text('Order Confirmed'),
+        centerTitle: true,
+      ),
+      body: BlocBuilder<OrderCubit, OrderState>(
+        builder: (context, state) {
+          FirestoreOrder? order;
+          if (state is OrderTrackingUpdated) {
+            order = state.order;
+          }
+
+          return SingleChildScrollView(
+            child: Column(children: [
+              const SizedBox(height: 40),
+              ScaleTransition(
+                scale: _scaleAnim,
+                child: Container(
+                  width: 100, height: 100,
+                  decoration: BoxDecoration(
+                    color: AppColors.success,
+                    shape: BoxShape.circle,
+                    boxShadow: [
+                      BoxShadow(
+                        color: AppColors.success.withValues(alpha: 0.3),
+                        blurRadius: 20,
+                        offset: const Offset(0, 5),
                       ),
-                    ),
-                    const SizedBox(height: 32),
-                    const Text(
-                      'تم تقديم طلبك بنجاح!',
-                      style: TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.w700,
-                        color: AppColors.ink,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      'رقم الطلب: ${widget.orderId}',
-                      style: const TextStyle(
-                        fontSize: 16,
-                        color: AppColors.textSecondary,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      'الإجمالي: ر.س${widget.total.toStringAsFixed(2)}',
-                      style: const TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w700,
-                        color: AppColors.darkGreen,
-                      ),
-                    ),
-                  ],
+                    ],
+                  ),
+                  child: const Icon(Icons.check, size: 56, color: Colors.white),
                 ),
               ),
-            ),
-            _buildOrderSummary(),
-            _buildTrackingSection(),
-            _buildActionButtons(),
-          ],
-        ),
+              const SizedBox(height: 24),
+              const Text('Order Placed Successfully!',
+                  style: TextStyle(fontSize: 22, fontWeight: FontWeight.w800, color: AppColors.darkGreen)),
+              const SizedBox(height: 8),
+              Text('Order #${widget.orderId}',
+                  style: const TextStyle(fontSize: 14, color: AppColors.textSecondary)),
+              const SizedBox(height: 4),
+              Text('Total: ر.س${widget.total.toStringAsFixed(2)}',
+                  style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w700, color: AppColors.darkGreen)),
+              const SizedBox(height: 32),
+              if (order != null) _buildTrackingTimeline(order),
+              const SizedBox(height: 16),
+              AnimatedCrossFade(
+                firstChild: const SizedBox.shrink(),
+                secondChild: _buildDetailsCard(),
+                crossFadeState: _showDetails
+                    ? CrossFadeState.showSecond
+                    : CrossFadeState.showFirst,
+                duration: const Duration(milliseconds: 500),
+              ),
+              const SizedBox(height: 32),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 24),
+                child: Column(children: [
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      onPressed: () => context.go('/orders'),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.darkGreen,
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                      ),
+                      child: const Text('Track My Order',
+                          style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700)),
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  OutlinedButton(
+                    onPressed: () => context.go('/'),
+                    style: OutlinedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      minimumSize: const Size(double.infinity, 0),
+                    ),
+                    child: const Text('Continue Shopping',
+                        style: TextStyle(fontSize: 16)),
+                  ),
+                ]),
+              ),
+              const SizedBox(height: 40),
+            ]),
+          );
+        },
       ),
     );
   }
 
-  Widget _buildOrderSummary() {
-    return Container(
-      margin: const EdgeInsets.all(16),
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 10,
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text(
-            'ملخص الطلب',
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w700,
-            ),
-          ),
-          const SizedBox(height: 12),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              const Text(
-                'عدد المنتجات',
-                style: TextStyle(color: AppColors.textSecondary),
-              ),
-              BlocBuilder<OrderCubit, OrderState>(
-                builder: (context, state) {
-                  if (state is OrderLoaded) {
-                    final count = state.orders.fold<int>(
-                      0,
-                      (sum, order) => sum + order.itemCount,
-                    );
-                    return Text('$count items');
-                  }
-                  return const Text('-');
-                },
-              ),
-            ],
-          ),
-          const SizedBox(height: 8),
-          const Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                'التوصيل',
-                style: TextStyle(color: AppColors.textSecondary),
-              ),
-              Text(
-                'Free',
-                style: TextStyle(color: AppColors.success),
-              ),
-            ],
-          ),
-          const Divider(height: 24),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              const Text(
-                'الإجمالي',
-                style: TextStyle(fontWeight: FontWeight.w700),
-              ),
-              Text(
-                'ر.س${widget.total.toStringAsFixed(2)}',
-                style: const TextStyle(
-                  fontWeight: FontWeight.w700,
-                  color: AppColors.darkGreen,
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildTrackingSection() {
-    final steps = [
-      {'icon': Icons.check_circle, 'label': 'تم التأكيد', 'active': true},
-      {'icon': Icons.inventory_2, 'label': 'قيد التجهيز', 'active': false},
-      {'icon': Icons.local_shipping, 'label': 'تم الشحن', 'active': false},
-      {'icon': Icons.home, 'label': 'في الطريق', 'active': false},
-      {'icon': Icons.check_circle, 'label': 'تم التسليم', 'active': false},
+  Widget _buildTrackingTimeline(FirestoreOrder order) {
+    final statuses = [
+      OrderStatus.confirmed,
+      OrderStatus.processing,
+      OrderStatus.shipped,
+      OrderStatus.outForDelivery,
+      OrderStatus.delivered,
     ];
 
+    final currentIdx = statuses.indexOf(order.status);
+
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 16),
-      padding: const EdgeInsets.all(16),
+      margin: const EdgeInsets.symmetric(horizontal: 24),
+      padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
+        boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 10)],
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text(
-            'تتبع طلبك',
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w700,
-            ),
-          ),
-          const SizedBox(height: 16),
-          SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: Row(
-              children: steps.asMap().entries.map((entry) {
-                final index = entry.key;
-                final step = entry.value;
-                final isActive = step['active'] as bool;
-                return Row(
-                  children: [
-                    Column(
-                      children: [
-                        Container(
-                          width: 40,
-                          height: 40,
-                          decoration: BoxDecoration(
-                            color: isActive ? AppColors.darkGreen : AppColors.divider,
-                            shape: BoxShape.circle,
-                          ),
-                          child: Icon(
-                            step['icon'] as IconData,
-                            size: 20,
-                            color: isActive ? Colors.white : Colors.grey,
-                          ),
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          step['label'] as String,
-                          style: TextStyle(
-                            fontSize: 10,
-                            color: isActive ? AppColors.ink : AppColors.textSecondary,
-                          ),
-                        ),
-                      ],
-                    ),
-                    if (index < steps.length - 1)
-                      Container(
-                        width: 40,
-                        height: 2,
-                        color: index < 1 ? AppColors.darkGreen : AppColors.divider,
-                      ),
-                  ],
-                );
-              }).toList(),
-            ),
-          ),
-        ],
-      ),
+      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        const Text('Order Progress',
+            style: TextStyle(fontWeight: FontWeight.w700, fontSize: 16)),
+        const SizedBox(height: 16),
+        ...List.generate(statuses.length, (i) {
+          final status = statuses[i];
+          final isCompleted = i <= currentIdx;
+          final isCurrent = i == currentIdx;
+          return Padding(
+            padding: const EdgeInsets.symmetric(vertical: 4),
+            child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Column(children: [
+                Container(
+                  width: 24, height: 24,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: isCompleted ? AppColors.darkGreen : Colors.grey.shade300,
+                  ),
+                  child: Icon(
+                    isCompleted ? Icons.check : Icons.circle_outlined,
+                    size: 14, color: Colors.white,
+                  ),
+                ),
+                if (i < statuses.length - 1)
+                  Container(
+                    width: 2,
+                    height: 24,
+                    color: i < currentIdx ? AppColors.darkGreen : Colors.grey.shade300,
+                  ),
+              ]),
+              const SizedBox(width: 12),
+              Padding(
+                padding: const EdgeInsets.only(top: 2),
+                child: Text(
+                  status.label,
+                  style: TextStyle(
+                    fontWeight: isCurrent ? FontWeight.w700 : FontWeight.normal,
+                    color: isCompleted ? AppColors.darkGreen : Colors.grey,
+                    fontSize: 13,
+                  ),
+                ),
+              ),
+            ]),
+          );
+        }),
+      ]),
     );
   }
 
-  Widget _buildActionButtons() {
+  Widget _buildDetailsCard() {
     return Container(
-      padding: const EdgeInsets.all(16),
-      child: SafeArea(
-        child: Column(
-          children: [
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: () => context.go('/account'),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.darkGreen,
-                  padding: const EdgeInsets.symmetric(vertical: 14),
-                ),
-                child: const Text(
-                  'عرض طلباتي',
-                  style: TextStyle(fontWeight: FontWeight.w700),
-                ),
-              ),
-            ),
-            const SizedBox(height: 12),
-            SizedBox(
-              width: double.infinity,
-              child: OutlinedButton(
-                onPressed: () => context.go('/'),
-                style: OutlinedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(vertical: 14),
-                ),
-                child: const Text('العودة للرئيسية'),
-              ),
-            ),
-          ],
-        ),
+      margin: const EdgeInsets.symmetric(horizontal: 24),
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 10)],
       ),
+      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        const Text('What happens next?',
+            style: TextStyle(fontWeight: FontWeight.w700, fontSize: 16)),
+        const SizedBox(height: 12),
+        _stepRow(Icons.check_circle, 'Order confirmed by seller'),
+        _stepRow(Icons.inventory_2, 'Items are being packed'),
+        _stepRow(Icons.local_shipping, 'Order shipped to your address'),
+        _stepRow(Icons.delivery_dining, 'Out for delivery'),
+        _stepRow(Icons.check_circle_outline, 'Delivered to your doorstep'),
+      ]),
+    );
+  }
+
+  Widget _stepRow(IconData icon, String text) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 6),
+      child: Row(children: [
+        Icon(icon, size: 20, color: AppColors.darkGreen),
+        const SizedBox(width: 12),
+        Text(text, style: const TextStyle(fontSize: 13)),
+      ]),
     );
   }
 }

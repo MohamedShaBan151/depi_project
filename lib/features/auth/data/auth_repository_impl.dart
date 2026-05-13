@@ -6,13 +6,16 @@ abstract class AuthRepository {
   Future<void> signInWithGoogle();
   Future<void> signUp(String email, String password, String name);
   Future<void> signOut();
+  Future<void> sendPasswordResetEmail(String email);
+  Future<void> sendEmailVerification();
+  Future<void> reloadUser();
+  bool get isEmailVerified;
   User? get currentUser;
 }
 
 class AuthRepositoryImpl implements AuthRepository {
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
-  // ✅ مهم جدًا Android + iOS
   final GoogleSignIn _googleSignIn = GoogleSignIn(
     scopes: ['email', 'profile'],
   );
@@ -20,7 +23,9 @@ class AuthRepositoryImpl implements AuthRepository {
   @override
   User? get currentUser => _auth.currentUser;
 
-  // ================= SIGN UP =================
+  @override
+  bool get isEmailVerified => _auth.currentUser?.emailVerified ?? false;
+
   @override
   Future<void> signUp(String email, String password, String name) async {
     try {
@@ -28,7 +33,6 @@ class AuthRepositoryImpl implements AuthRepository {
         email: email,
         password: password,
       );
-
       await result.user?.updateDisplayName(name);
       await result.user?.reload();
     } on FirebaseAuthException catch (e) {
@@ -36,7 +40,6 @@ class AuthRepositoryImpl implements AuthRepository {
     }
   }
 
-  // ================= SIGN IN =================
   @override
   Future<void> signIn(String email, String password) async {
     try {
@@ -49,32 +52,23 @@ class AuthRepositoryImpl implements AuthRepository {
     }
   }
 
-  // ================= GOOGLE SIGN IN =================
   @override
   Future<void> signInWithGoogle() async {
     try {
-      // ❗ مهم: reset session (fix مشاكل login عالقة)
       await _googleSignIn.signOut();
-
       final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
-
-      // user cancel
       if (googleUser == null) {
         throw Exception('Google sign-in cancelled');
       }
-
       final GoogleSignInAuthentication googleAuth =
-      await googleUser.authentication;
-
+          await googleUser.authentication;
       if (googleAuth.accessToken == null || googleAuth.idToken == null) {
         throw Exception('Missing Google auth tokens');
       }
-
       final credential = GoogleAuthProvider.credential(
         accessToken: googleAuth.accessToken,
         idToken: googleAuth.idToken,
       );
-
       await _auth.signInWithCredential(credential);
     } on FirebaseAuthException catch (e) {
       throw _handleError(e);
@@ -83,14 +77,38 @@ class AuthRepositoryImpl implements AuthRepository {
     }
   }
 
-  // ================= SIGN OUT =================
   @override
   Future<void> signOut() async {
     await _auth.signOut();
     await _googleSignIn.signOut();
   }
 
-  // ================= ERROR HANDLING =================
+  @override
+  Future<void> sendPasswordResetEmail(String email) async {
+    try {
+      await _auth.sendPasswordResetEmail(email: email);
+    } on FirebaseAuthException catch (e) {
+      throw _handleError(e);
+    }
+  }
+
+  @override
+  Future<void> sendEmailVerification() async {
+    try {
+      final user = _auth.currentUser;
+      if (user != null && !user.emailVerified) {
+        await user.sendEmailVerification();
+      }
+    } on FirebaseAuthException catch (e) {
+      throw _handleError(e);
+    }
+  }
+
+  @override
+  Future<void> reloadUser() async {
+    await _auth.currentUser?.reload();
+  }
+
   String _handleError(FirebaseAuthException e) {
     switch (e.code) {
       case 'email-already-in-use':

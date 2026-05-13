@@ -29,9 +29,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Future<void> _signInWithEmail() async {
     if (!_formKey.currentState!.validate()) return;
-
     setState(() => _isLoading = true);
-
     try {
       await context.read<AuthCubit>().signIn(
         _emailController.text.trim(),
@@ -44,7 +42,6 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Future<void> _signInWithGoogle() async {
     setState(() => _isLoading = true);
-
     try {
       await context.read<AuthCubit>().signInWithGoogle();
     } finally {
@@ -52,19 +49,71 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
+  void _showForgotPasswordDialog() {
+    final emailController = TextEditingController();
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('نسيت كلمة المرور'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Text('أدخل بريدك الإلكتروني لإعادة تعيين كلمة المرور'),
+            const SizedBox(height: 16),
+            TextField(
+              controller: emailController,
+              decoration: const InputDecoration(
+                labelText: 'البريد الإلكتروني',
+                prefixIcon: Icon(Icons.email),
+              ),
+              keyboardType: TextInputType.emailAddress,
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('إلغاء'),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              if (emailController.text.trim().isEmpty) return;
+              await context
+                  .read<AuthCubit>()
+                  .sendPasswordResetEmail(emailController.text.trim());
+              if (ctx.mounted) Navigator.pop(ctx);
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppColors.darkGreen,
+            ),
+            child: const Text('إرسال',
+                style: TextStyle(color: Colors.white)),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocListener<AuthCubit, AuthState>(
       listener: (context, state) {
         if (state is AuthAuthenticated) {
-          context.go('/'); // 👉 Home
+          context.go('/');
         }
-
         if (state is AuthError) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(state.message),
               backgroundColor: AppColors.error,
+            ),
+          );
+        }
+        if (state is AuthPasswordResetSent) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('تم إرسال رابط إعادة تعيين كلمة المرور إلى بريدك الإلكتروني'),
+              backgroundColor: AppColors.success,
             ),
           );
         }
@@ -84,25 +133,18 @@ class _LoginScreenState extends State<LoginScreen> {
                   const SizedBox(height: 48),
                   _buildWelcomeText(),
                   const SizedBox(height: 32),
-
                   _buildEmailField(),
                   const SizedBox(height: 16),
-
                   _buildPasswordField(),
                   const SizedBox(height: 8),
-
                   _buildForgotPassword(),
                   const SizedBox(height: 24),
-
                   _buildSignInButton(),
                   const SizedBox(height: 16),
-
                   _buildDivider(),
                   const SizedBox(height: 16),
-
                   _buildGoogleButton(),
                   const SizedBox(height: 32),
-
                   _buildSignUpLink(),
                 ],
               ),
@@ -112,8 +154,6 @@ class _LoginScreenState extends State<LoginScreen> {
       ),
     );
   }
-
-  // ── UI Widgets ─────────────────────────────────────────────
 
   Widget _buildLogo() {
     return Center(
@@ -208,7 +248,7 @@ class _LoginScreenState extends State<LoginScreen> {
     return Align(
       alignment: Alignment.centerLeft,
       child: TextButton(
-        onPressed: () {},
+        onPressed: _showForgotPasswordDialog,
         child: const Text('نسيت كلمة المرور؟'),
       ),
     );

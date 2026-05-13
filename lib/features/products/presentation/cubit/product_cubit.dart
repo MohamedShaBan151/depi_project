@@ -11,6 +11,10 @@ class ProductCubit extends Cubit<ProductState> {
   List<Product> _all = [];
   StreamSubscription<dynamic>? _subscription;
 
+  String _selectedCategory = 'All';
+  String _sortBy = '';
+  String _searchQuery = '';
+
   ProductCubit(this._service) : super(ProductInitial());
 
   void loadProducts() {
@@ -19,29 +23,85 @@ class ProductCubit extends Cubit<ProductState> {
     _subscription = _service.watchProducts().listen(
       (models) {
         _all = models.map((m) => m.toEntity()).toList();
-        emit(ProductLoaded(List.of(_all)));
+        _applyFilters();
       },
       onError: (Object e) => emit(ProductError(e.toString())),
     );
   }
 
   void filterByCategory(String cat) {
-    final filtered = cat == 'All'
-        ? List.of(_all)
-        : _all.where((p) => p.category == cat).toList();
-    emit(ProductLoaded(filtered));
+    _selectedCategory = cat;
+    _applyFilters();
   }
 
   void searchProducts(String query) {
-    if (query.isEmpty) {
+    _searchQuery = query;
+    _applyFilters();
+  }
+
+  void sortBy(String sort) {
+    _sortBy = sort;
+    _applyFilters();
+  }
+
+  void advancedSearch({
+    required String query,
+    String? category,
+    double? minPrice,
+    double? maxPrice,
+    double? minRating,
+    String? sortBy,
+  }) {
+    _searchQuery = query;
+    if (category != null) _selectedCategory = category;
+    if (sortBy != null) _sortBy = sortBy;
+
+    emit(ProductLoading());
+    _service.searchProducts(
+      query: query,
+      category: category,
+      minPrice: minPrice,
+      maxPrice: maxPrice,
+      minRating: minRating,
+      sortBy: sortBy ?? _sortBy,
+    ).then((models) {
+      _all = models.map((m) => m.toEntity()).toList();
       emit(ProductLoaded(List.of(_all)));
-      return;
+    }).catchError((e) {
+      emit(ProductError(e.toString()));
+    });
+  }
+
+  void _applyFilters() {
+    var filtered = List<Product>.from(_all);
+
+    if (_selectedCategory != 'All') {
+      filtered = filtered.where((p) => p.category == _selectedCategory).toList();
     }
-    final filtered = _all
-        .where((p) => p.name.toLowerCase().contains(query.toLowerCase()))
-        .toList();
+
+    if (_searchQuery.isNotEmpty) {
+      filtered = filtered
+          .where((p) => p.name.toLowerCase().contains(_searchQuery.toLowerCase()))
+          .toList();
+    }
+
+    switch (_sortBy) {
+      case 'price_asc':
+        filtered.sort((a, b) => a.price.compareTo(b.price));
+      case 'price_desc':
+        filtered.sort((a, b) => b.price.compareTo(a.price));
+      case 'rating':
+        filtered.sort((a, b) => b.rating.compareTo(a.rating));
+      case 'popular':
+        filtered.sort((a, b) => b.reviewCount.compareTo(a.reviewCount));
+      case 'name':
+        filtered.sort((a, b) => a.name.compareTo(b.name));
+    }
+
     emit(ProductLoaded(filtered));
   }
+
+  String get selectedCategory => _selectedCategory;
 
   @override
   Future<void> close() {
@@ -49,5 +109,10 @@ class ProductCubit extends Cubit<ProductState> {
     return super.close();
   }
 
-  void loadAll() {}
+  void loadAll() {
+    _selectedCategory = 'All';
+    _sortBy = '';
+    _searchQuery = '';
+    loadProducts();
+  }
 }

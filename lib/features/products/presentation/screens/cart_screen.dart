@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../../core/theme/saudi_theme.dart';
 import '../../../../cubits/shopping_cubit.dart';
@@ -51,27 +52,19 @@ class _EmptyCart extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(
-            Icons.shopping_cart_outlined,
-            size: 80,
-            color: AppColors.darkGreen.withValues(alpha: 0.3),
-          ),
+          Icon(Icons.shopping_cart_outlined, size: 80,
+              color: AppColors.darkGreen.withValues(alpha: 0.3)),
           const SizedBox(height: 16),
-          const Text(
-            'Your cart is empty',
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.w600,
-              color: AppColors.textSecondary,
-            ),
-          ),
+          const Text('Your cart is empty',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600, color: AppColors.textSecondary)),
           const SizedBox(height: 8),
-          const Text(
-            'Add items to get started',
-            style: TextStyle(
-              fontSize: 14,
-              color: AppColors.textSecondary,
-            ),
+          const Text('Add items to get started',
+              style: TextStyle(fontSize: 14, color: AppColors.textSecondary)),
+          const SizedBox(height: 24),
+          ElevatedButton(
+            onPressed: () => context.go('/'),
+            style: ElevatedButton.styleFrom(backgroundColor: AppColors.darkGreen, foregroundColor: Colors.white),
+            child: const Text('Continue Shopping'),
           ),
         ],
       ),
@@ -92,86 +85,49 @@ class _CartItemCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
+        boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 8, offset: const Offset(0, 2))],
       ),
       child: Row(
         children: [
           Container(
-            width: 80,
-            height: 80,
+            width: 80, height: 80,
             decoration: BoxDecoration(
               color: AppColors.lightGold.withValues(alpha: 0.3),
               borderRadius: BorderRadius.circular(12),
             ),
-            child: const Icon(
-              Icons.inventory_2_outlined,
-              size: 32,
-              color: AppColors.darkGreen,
-            ),
+            child: const Icon(Icons.inventory_2_outlined, size: 32, color: AppColors.darkGreen),
           ),
           const SizedBox(width: 12),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  product.name,
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
+                Text(product.name, maxLines: 2, overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600)),
                 const SizedBox(height: 4),
-                Text(
-                  'SAR ${product.price.toStringAsFixed(2)}',
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w800,
-                    color: AppColors.darkGreen,
-                  ),
-                ),
+                Text('SAR ${product.price.toStringAsFixed(2)}',
+                    style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w800, color: AppColors.darkGreen)),
                 const SizedBox(height: 8),
-                Row(
-                  children: [
-                    _QuantityButton(
-                      icon: Icons.remove,
-                      onTap: () {
-                        context.read<ShoppingCubit>().removeFromCart(product.id);
-                      },
-                    ),
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                      child: Text(
-                        '${item.quantity}',
-                        style: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                    ),
-                    _QuantityButton(
-                      icon: Icons.add,
-                      onTap: () {
-                        context.read<ShoppingCubit>().addToCart(product);
-                      },
-                    ),
-                    const Spacer(),
-                    IconButton(
-                      icon: const Icon(Icons.delete_outline, color: Colors.red),
-                      onPressed: () {
-                        context.read<ShoppingCubit>().deleteFromCart(product.id);
-                      },
-                    ),
-                  ],
-                ),
+                Row(children: [
+                  _QuantityButton(icon: Icons.remove, onTap: () {
+                    context.read<ShoppingCubit>().removeFromCart(product.id);
+                  }),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: Text('${item.quantity}',
+                        style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700)),
+                  ),
+                  _QuantityButton(icon: Icons.add, onTap: () {
+                    context.read<ShoppingCubit>().addToCart(product);
+                  }),
+                  const Spacer(),
+                  IconButton(
+                    icon: const Icon(Icons.delete_outline, color: Colors.red),
+                    onPressed: () {
+                      context.read<ShoppingCubit>().deleteFromCart(product.id);
+                    },
+                  ),
+                ]),
               ],
             ),
           ),
@@ -191,8 +147,7 @@ class _QuantityButton extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        width: 32,
-        height: 32,
+        width: 32, height: 32,
         decoration: BoxDecoration(
           color: AppColors.lightGold,
           borderRadius: BorderRadius.circular(8),
@@ -217,98 +172,55 @@ class _CartSummary extends StatelessWidget {
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Colors.white,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.1),
-            blurRadius: 10,
-            offset: const Offset(0, -2),
-          ),
-        ],
+        boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.1), blurRadius: 10, offset: const Offset(0, -2))],
       ),
       child: SafeArea(
-        child: Column(
-          children: [
-            if (state.cartTotal < freeShippingThreshold)
-              Column(
-                children: [
-                  LinearProgressIndicator(
-                    value: progress,
-                    backgroundColor: AppColors.divider,
-                    valueColor: const AlwaysStoppedAnimation(AppColors.darkGreen),
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    'SAR ${remaining.toStringAsFixed(2)} away from free shipping',
-                    style: const TextStyle(
-                      fontSize: 12,
-                      color: AppColors.textSecondary,
-                    ),
-                  ),
-                ],
-              )
-            else
-              Container(
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: AppColors.lightGold,
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: const Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(Icons.local_shipping, color: AppColors.darkGreen),
-                    SizedBox(width: 8),
-                    Text(
-                      'Free Shipping Applied!',
-                      style: TextStyle(
-                        fontWeight: FontWeight.w700,
-                        color: AppColors.darkGreen,
-                      ),
-                    ),
-                  ],
-                ),
+        child: Column(children: [
+          if (state.cartTotal < freeShippingThreshold)
+            Column(children: [
+              LinearProgressIndicator(
+                value: progress,
+                backgroundColor: AppColors.divider,
+                valueColor: const AlwaysStoppedAnimation(AppColors.darkGreen),
               ),
-            const SizedBox(height: 16),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const Text(
-                  'Total',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-                Text(
-                  'SAR ${state.cartTotal.toStringAsFixed(2)}',
-                  style: const TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.w800,
-                    color: AppColors.darkGreen,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 16),
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: () {},
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.darkGreen,
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                ),
-                child: const Text(
-                  'Checkout',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
+              const SizedBox(height: 8),
+              Text('SAR ${remaining.toStringAsFixed(2)} away from free shipping',
+                  style: const TextStyle(fontSize: 12, color: AppColors.textSecondary)),
+            ])
+          else
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: AppColors.lightGold,
+                borderRadius: BorderRadius.circular(8),
               ),
+              child: const Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+                Icon(Icons.local_shipping, color: AppColors.darkGreen),
+                SizedBox(width: 8),
+                Text('Free Shipping Applied!',
+                    style: TextStyle(fontWeight: FontWeight.w700, color: AppColors.darkGreen)),
+              ]),
             ),
-          ],
-        ),
+          const SizedBox(height: 16),
+          Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+            const Text('Total', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700)),
+            Text('SAR ${state.cartTotal.toStringAsFixed(2)}',
+                style: const TextStyle(fontSize: 24, fontWeight: FontWeight.w800, color: AppColors.darkGreen)),
+          ]),
+          const SizedBox(height: 16),
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton(
+              onPressed: () => context.push('/checkout'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.darkGreen,
+                padding: const EdgeInsets.symmetric(vertical: 16),
+              ),
+              child: const Text('Checkout',
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700)),
+            ),
+          ),
+        ]),
       ),
     );
   }

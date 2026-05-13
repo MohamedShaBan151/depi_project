@@ -5,10 +5,12 @@ class Product {
   final String category;
   final String imageUrl;
   final int stock;
-  final double? originalPrice; // null → no discount badge
-  final double rating;         // 0–5
+  final double? originalPrice;
+  final double rating;
   final int reviewCount;
   final bool isFeatured;
+  final String? description;
+  final List<String> images;
 
   const Product({
     required this.id,
@@ -21,6 +23,8 @@ class Product {
     this.rating = 4.0,
     this.reviewCount = 0,
     this.isFeatured = false,
+    this.description,
+    this.images = const [],
   });
 
   bool get hasDiscount => originalPrice != null && originalPrice! > price;

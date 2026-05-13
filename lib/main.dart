@@ -7,6 +7,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'firebase_options.dart';
 import 'core/theme/saudi_theme.dart';
 import 'core/router/app_router.dart';
+import 'core/l10n/app_localizations.dart';
 import 'cubits/shopping_cubit.dart';
 import 'data/data_sources/cart_persistence_service.dart';
 import 'features/auth/data/auth_repository_impl.dart';
@@ -14,14 +15,21 @@ import 'features/auth/presentation/cubit/auth_cubit.dart';
 import 'features/products/data/product_service.dart';
 import 'features/products/presentation/cubit/product_cubit.dart';
 import 'features/products/presentation/cubit/order_cubit.dart';
+import 'features/products/data/address_service.dart';
+import 'notifications/fcm_notification_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
-  // Initialise SharedPreferences once at startup and pass it down.
   final prefs = await SharedPreferences.getInstance();
   final cartPersistence = CartPersistenceService(prefs);
+
+  await AddressService.init();
+
+  try {
+    await NotificationService.initialize();
+  } catch (_) {}
 
   SystemChrome.setSystemUIOverlayStyle(SaudiTheme.overlayStyle);
   SystemChrome.setPreferredOrientations([
@@ -42,7 +50,6 @@ class NoonApp extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         BlocProvider(
-          // Rehydrate cart immediately after creation.
           create: (_) =>
               ShoppingCubit(cartPersistence)..loadPersistedCart(),
         ),
@@ -57,6 +64,17 @@ class NoonApp extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         theme: SaudiTheme.theme,
         routerConfig: appRouter,
+        locale: const Locale('ar'),
+        supportedLocales: const [Locale('en'), Locale('ar')],
+        localizationsDelegates: const [
+          AppLocalizationsDelegate(),
+        ],
+        localeResolutionCallback: (locale, supportedLocales) {
+          for (final l in supportedLocales) {
+            if (l.languageCode == locale?.languageCode) return l;
+          }
+          return const Locale('en');
+        },
       ),
     );
   }

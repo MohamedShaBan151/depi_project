@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../../core/theme/saudi_theme.dart';
 import '../../../../cubits/shopping_cubit.dart';
@@ -10,13 +11,11 @@ import '../../domain/entities/product.dart';
 import '../../../../widgets/noon_bottom_nav.dart';
 import '../cubit/product_cubit.dart';
 import '../cubit/product_state.dart';
+import '../../data/product_service.dart';
 
-// Use the real feature screens for tab content
 import 'cart_screen.dart';
 import 'search_screen.dart';
 import 'profile_screen.dart';
-
-// ── Shell ─────────────────────────────────────────────────────────────────────
 
 class HomeScreen extends StatefulWidget {
   final String? userName;
@@ -59,8 +58,6 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 }
 
-// ── Home Page ─────────────────────────────────────────────────────────────────
-
 class _HomePage extends StatefulWidget {
   final String? userName;
   const _HomePage({this.userName});
@@ -71,8 +68,7 @@ class _HomePage extends StatefulWidget {
 
 class _HomePageState extends State<_HomePage> {
   String _selectedCategory = 'All';
-
-  static const _categories = ['All', 'Electronics', 'Fashion', 'Grocery', 'Toys'];
+  String _sortBy = '';
 
   void _addToCart(Product product) {
     context.read<ShoppingCubit>().addToCart(
@@ -101,7 +97,6 @@ class _HomePageState extends State<_HomePage> {
     return SafeArea(
       child: CustomScrollView(
         slivers: [
-          // ── AppBar ──────────────────────────────────────────────────────
           SliverAppBar(
             pinned: true,
             backgroundColor: AppColors.darkGreen,
@@ -152,32 +147,24 @@ class _HomePageState extends State<_HomePage> {
               const SizedBox(width: 4),
             ],
           ),
-
-          // ── Hero Banner ─────────────────────────────────────────────────
           const SliverToBoxAdapter(child: _HeroBannerCarousel()),
-
-          // ── Promo Strip ─────────────────────────────────────────────────
           const SliverToBoxAdapter(child: _PromoStrip()),
-
-          // ── Countdown Timer ─────────────────────────────────────────────
           SliverToBoxAdapter(
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
               child: _CountdownTimer(),
             ),
           ),
-
-          // ── Categories ──────────────────────────────────────────────────
           SliverToBoxAdapter(
             child: SizedBox(
               height: 52,
               child: ListView.separated(
                 padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                 scrollDirection: Axis.horizontal,
-                itemCount: _categories.length,
+                itemCount: ProductService.categories.length,
                 separatorBuilder: (_, __) => const SizedBox(width: 8),
                 itemBuilder: (_, i) {
-                  final cat = _categories[i];
+                  final cat = ProductService.categories[i];
                   final selected = cat == _selectedCategory;
                   return GestureDetector(
                     onTap: () {
@@ -204,19 +191,37 @@ class _HomePageState extends State<_HomePage> {
               ),
             ),
           ),
-
-          // ── Section title ────────────────────────────────────────────────
-          const SliverPadding(
-            padding: EdgeInsets.fromLTRB(16, 12, 16, 4),
-            sliver: SliverToBoxAdapter(
-              child: Text(
-                'Recommended for You',
-                style: TextStyle(fontSize: 17, fontWeight: FontWeight.w700),
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(16, 4, 16, 4),
+              child: Row(
+                children: [
+                  const Text(
+                    'Recommended for You',
+                    style: TextStyle(fontSize: 17, fontWeight: FontWeight.w700),
+                  ),
+                  const Spacer(),
+                  DropdownButtonHideUnderline(
+                    child: DropdownButton<String>(
+                      value: _sortBy.isEmpty ? null : _sortBy,
+                      hint: const Text('Sort', style: TextStyle(fontSize: 12)),
+                      items: const [
+                        DropdownMenuItem(value: 'price_asc', child: Text('Price: Low to High', style: TextStyle(fontSize: 12))),
+                        DropdownMenuItem(value: 'price_desc', child: Text('Price: High to Low', style: TextStyle(fontSize: 12))),
+                        DropdownMenuItem(value: 'rating', child: Text('Top Rated', style: TextStyle(fontSize: 12))),
+                        DropdownMenuItem(value: 'popular', child: Text('Most Popular', style: TextStyle(fontSize: 12))),
+                        DropdownMenuItem(value: 'name', child: Text('Name A-Z', style: TextStyle(fontSize: 12))),
+                      ],
+                      onChanged: (v) {
+                        setState(() => _sortBy = v ?? '');
+                        context.read<ProductCubit>().sortBy(v ?? '');
+                      },
+                    ),
+                  ),
+                ],
               ),
             ),
           ),
-
-          // ── Product Grid ─────────────────────────────────────────────────
           BlocBuilder<ProductCubit, ProductState>(
             builder: (context, state) => switch (state) {
               ProductLoading() => const SliverFillRemaining(
@@ -243,16 +248,12 @@ class _HomePageState extends State<_HomePage> {
               _ => const SliverToBoxAdapter(child: SizedBox.shrink()),
             },
           ),
-
-          // Bottom padding
           const SliverToBoxAdapter(child: SizedBox(height: 16)),
         ],
       ),
     );
   }
 }
-
-// ── Product Card ──────────────────────────────────────────────────────────────
 
 class _ProductCard extends StatelessWidget {
   final Product product;
@@ -268,161 +269,151 @@ class _ProductCard extends StatelessWidget {
             .round()
         : 0;
 
-    return Card(
-      elevation: 1.5,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      clipBehavior: Clip.antiAlias,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // ── Image area ────────────────────────────────────────────────
-          Expanded(
-            flex: 5,
-            child: Stack(
-              children: [
-                // Background placeholder
-                Container(
-                  width: double.infinity,
-                  color: const Color(0xFFF5F5F5),
-                  child: Icon(
-                    _iconForCategory(product.category),
-                    size: 56,
-                    color: AppColors.darkGreen.withValues(alpha: 0.15),
-                  ),
-                ),
-                // Discount badge
-                if (hasDiscount)
-                  Positioned(
-                    top: 8,
-                    left: 8,
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
-                      decoration: BoxDecoration(
-                        color: AppColors.error,
-                        borderRadius: BorderRadius.circular(6),
-                      ),
-                      child: Text(
-                        '-$discountPct%',
-                        style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 11,
-                            fontWeight: FontWeight.w700),
-                      ),
-                    ),
-                  ),
-                // Featured badge
-                if (product.isFeatured)
-                  Positioned(
-                    top: 8,
-                    right: 8,
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
-                      decoration: BoxDecoration(
-                        color: AppColors.primary,
-                        borderRadius: BorderRadius.circular(6),
-                      ),
-                      child: const Text(
-                        '★ Top',
-                        style: TextStyle(
-                            color: AppColors.darkGreen,
-                            fontSize: 10,
-                            fontWeight: FontWeight.w700),
-                      ),
-                    ),
-                  ),
-              ],
-            ),
-          ),
-
-          // ── Details ───────────────────────────────────────────────────
-          Expanded(
-            flex: 4,
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(10, 8, 10, 8),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+    return GestureDetector(
+      onTap: () => context.push('/products/${product.id}'),
+      child: Card(
+        elevation: 1.5,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        clipBehavior: Clip.antiAlias,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(
+              flex: 5,
+              child: Stack(
                 children: [
-                  // Name
-                  Text(
-                    product.name,
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
-                  ),
-                  const SizedBox(height: 4),
-
-                  // Stars + review count
-                  Row(
-                    children: [
-                      ...List.generate(5, (i) => Icon(
-                            i < product.rating.floor()
-                                ? Icons.star
-                                : (i < product.rating
-                                    ? Icons.star_half
-                                    : Icons.star_border),
-                            size: 12,
-                            color: const Color(0xFFFFC107),
-                          )),
-                      const SizedBox(width: 4),
-                      Text(
-                        '(${product.reviewCount})',
-                        style: const TextStyle(fontSize: 10, color: AppColors.textSecondary),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 4),
-
-                  // Price row
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      Text(
-                        'SAR ${product.price.toStringAsFixed(0)}',
-                        style: const TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w800,
-                            color: AppColors.darkGreen),
-                      ),
-                      if (hasDiscount) ...[
-                        const SizedBox(width: 5),
-                        Text(
-                          '${product.originalPrice!.toStringAsFixed(0)}',
-                          style: const TextStyle(
-                              fontSize: 11,
-                              color: AppColors.textSecondary,
-                              decoration: TextDecoration.lineThrough),
-                        ),
-                      ],
-                    ],
-                  ),
-                  const Spacer(),
-
-                  // Add to Cart button
-                  SizedBox(
+                  Container(
                     width: double.infinity,
-                    height: 32,
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.darkGreen,
-                        foregroundColor: Colors.white,
-                        padding: EdgeInsets.zero,
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8)),
-                        elevation: 0,
-                      ),
-                      onPressed:
-                          product.stock > 0 ? () => onAddToCart(product) : null,
-                      child: Text(
-                        product.stock > 0 ? 'Add to Cart' : 'Out of Stock',
-                        style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
-                      ),
+                    color: const Color(0xFFF5F5F5),
+                    child: Icon(
+                      _iconForCategory(product.category),
+                      size: 56,
+                      color: AppColors.darkGreen.withValues(alpha: 0.15),
                     ),
                   ),
+                  if (hasDiscount)
+                    Positioned(
+                      top: 8,
+                      left: 8,
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
+                        decoration: BoxDecoration(
+                          color: AppColors.error,
+                          borderRadius: BorderRadius.circular(6),
+                        ),
+                        child: Text(
+                          '-$discountPct%',
+                          style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 11,
+                              fontWeight: FontWeight.w700),
+                        ),
+                      ),
+                    ),
+                  if (product.isFeatured)
+                    Positioned(
+                      top: 8,
+                      right: 8,
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
+                        decoration: BoxDecoration(
+                          color: AppColors.primary,
+                          borderRadius: BorderRadius.circular(6),
+                        ),
+                        child: const Text(
+                          '★ Top',
+                          style: TextStyle(
+                              color: AppColors.darkGreen,
+                              fontSize: 10,
+                              fontWeight: FontWeight.w700),
+                        ),
+                      ),
+                    ),
                 ],
               ),
             ),
-          ),
-        ],
+            Expanded(
+              flex: 4,
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(10, 8, 10, 8),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      product.name,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
+                    ),
+                    const SizedBox(height: 4),
+                    Row(
+                      children: [
+                        ...List.generate(5, (i) => Icon(
+                              i < product.rating.floor()
+                                  ? Icons.star
+                                  : (i < product.rating
+                                      ? Icons.star_half
+                                      : Icons.star_border),
+                              size: 12,
+                              color: const Color(0xFFFFC107),
+                            )),
+                        const SizedBox(width: 4),
+                        Text(
+                          '(${product.reviewCount})',
+                          style: const TextStyle(fontSize: 10, color: AppColors.textSecondary),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 4),
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        Text(
+                          'SAR ${product.price.toStringAsFixed(0)}',
+                          style: const TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w800,
+                              color: AppColors.darkGreen),
+                        ),
+                        if (hasDiscount) ...[
+                          const SizedBox(width: 5),
+                          Text(
+                            '${product.originalPrice!.toStringAsFixed(0)}',
+                            style: const TextStyle(
+                                fontSize: 11,
+                                color: AppColors.textSecondary,
+                                decoration: TextDecoration.lineThrough),
+                          ),
+                        ],
+                      ],
+                    ),
+                    const Spacer(),
+                    SizedBox(
+                      width: double.infinity,
+                      height: 32,
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: AppColors.darkGreen,
+                          foregroundColor: Colors.white,
+                          padding: EdgeInsets.zero,
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8)),
+                          elevation: 0,
+                        ),
+                        onPressed:
+                            product.stock > 0 ? () => onAddToCart(product) : null,
+                        child: Text(
+                          product.stock > 0 ? 'Add to Cart' : 'Out of Stock',
+                          style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -433,12 +424,17 @@ class _ProductCard extends StatelessWidget {
       'Fashion'     => Icons.checkroom,
       'Grocery'     => Icons.local_grocery_store,
       'Toys'        => Icons.toys,
+      'Home'        => Icons.home,
+      'Beauty'      => Icons.face,
+      'Sports'      => Icons.sports,
+      'Books'       => Icons.book,
+      'Automotive'  => Icons.directions_car,
+      'Health'      => Icons.health_and_safety,
+      'Baby'        => Icons.child_care,
       _             => Icons.inventory_2_outlined,
     };
   }
 }
-
-// ── Hero Banner Carousel ──────────────────────────────────────────────────────
 
 class _HeroBannerCarousel extends StatefulWidget {
   const _HeroBannerCarousel();
@@ -554,8 +550,6 @@ class _BannerTile extends StatelessWidget {
   }
 }
 
-// ── Promo Strip ───────────────────────────────────────────────────────────────
-
 class _PromoStrip extends StatelessWidget {
   const _PromoStrip();
 
@@ -591,8 +585,6 @@ class _PromoStrip extends StatelessWidget {
     );
   }
 }
-
-// ── Countdown Timer ───────────────────────────────────────────────────────────
 
 class _CountdownTimer extends StatefulWidget {
   @override

@@ -45,6 +45,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             _buildQuickActions(),
             _buildOrdersSection(),
             _buildAddressesSection(),
+            _buildEmailVerificationSection(),
             _buildSettingsSection(),
             _buildLogoutButton(),
           ],
@@ -60,107 +61,72 @@ class _ProfileScreenState extends State<ProfileScreen> {
           return Container(
             padding: const EdgeInsets.all(24),
             color: AppColors.darkGreen,
-            child: Row(
-              children: [
-                Container(
-                  width: 72,
-                  height: 72,
-                  decoration: const BoxDecoration(
-                    color: Colors.white,
-                    shape: BoxShape.circle,
-                  ),
-                  child: const Icon(
-                    Icons.person,
-                    size: 40,
-                    color: AppColors.darkGreen,
-                  ),
+            child: Row(children: [
+              Container(
+                width: 72, height: 72,
+                decoration: const BoxDecoration(
+                  color: Colors.white,
+                  shape: BoxShape.circle,
                 ),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        state.user!.displayName ?? 'User',
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 20,
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        state.user!.email ?? '',
-                        style: const TextStyle(
-                          color: Colors.white70,
-                          fontSize: 14,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
+                child: const Icon(Icons.person, size: 40, color: AppColors.darkGreen),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                  Text(state.user!.displayName ?? 'User',
+                      style: const TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.w700)),
+                  const SizedBox(height: 4),
+                  Text(state.user!.email ?? '',
+                      style: const TextStyle(color: Colors.white70, fontSize: 14)),
+                  if (!state.user!.emailVerified)
+                    TextButton(
+                      onPressed: () => context.read<AuthCubit>().sendEmailVerification(),
+                      child: const Text('Verify Email', style: TextStyle(color: AppColors.primary, fontSize: 12)),
+                    ),
+                ]),
+              ),
+            ]),
           );
         }
         return Container(
           padding: const EdgeInsets.all(24),
           color: AppColors.darkGreen,
-          child: Row(
-            children: [
-              Container(
-                width: 72,
-                height: 72,
-                decoration: const BoxDecoration(
-                  color: Colors.white,
-                  shape: BoxShape.circle,
-                ),
-                child: const Icon(
-                  Icons.person,
-                  size: 40,
-                  color: AppColors.darkGreen,
-                ),
+          child: Row(children: [
+            Container(
+              width: 72, height: 72,
+              decoration: const BoxDecoration(
+                color: Colors.white, shape: BoxShape.circle,
               ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text(
-                      'Guest User',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 20,
-                        fontWeight: FontWeight.w700,
-                      ),
+              child: const Icon(Icons.person, size: 40, color: AppColors.darkGreen),
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                const Text('Guest User',
+                    style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.w700)),
+                const SizedBox(height: 8),
+                Row(children: [
+                  ElevatedButton(
+                    onPressed: () => context.push('/login'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.primary,
+                      foregroundColor: AppColors.darkGreen,
                     ),
-                    const SizedBox(height: 8),
-                    Row(
-                      children: [
-                        ElevatedButton(
-                          onPressed: () => context.push('/login'),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: AppColors.primary,
-                            foregroundColor: AppColors.darkGreen,
-                          ),
-                          child: const Text('Sign In'),
-                        ),
-                        const SizedBox(width: 12),
-                        OutlinedButton(
-                          onPressed: () => context.push('/register'),
-                          style: OutlinedButton.styleFrom(
-                            foregroundColor: Colors.white,
-                            side: const BorderSide(color: Colors.white),
-                          ),
-                          child: const Text('Register'),
-                        ),
-                      ],
+                    child: const Text('Sign In'),
+                  ),
+                  const SizedBox(width: 12),
+                  OutlinedButton(
+                    onPressed: () => context.push('/register'),
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: Colors.white,
+                      side: const BorderSide(color: Colors.white),
                     ),
-                  ],
-                ),
-              ),
-            ],
-          ),
+                    child: const Text('Register'),
+                  ),
+                ]),
+              ]),
+            ),
+          ]),
         );
       },
     );
@@ -169,34 +135,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget _buildQuickActions() {
     return Padding(
       padding: const EdgeInsets.all(16),
-      child: Row(
-        children: [
-          _buildQuickActionCard(
-            icon: Icons.shopping_bag,
-            label: 'Orders',
-            onTap: () {},
-          ),
-          const SizedBox(width: 12),
-          _buildQuickActionCard(
-            icon: Icons.favorite,
-            label: 'Wishlist',
-            onTap: () {},
-          ),
-          const SizedBox(width: 12),
-          _buildQuickActionCard(
-            icon: Icons.local_offer,
-            label: 'Coupons',
-            onTap: () {},
-          ),
-        ],
-      ),
+      child: Row(children: [
+        _buildQuickActionCard(icon: Icons.shopping_bag, label: 'Orders', onTap: () => context.push('/orders')),
+        const SizedBox(width: 12),
+        _buildQuickActionCard(icon: Icons.favorite, label: 'Wishlist', onTap: () {}),
+        const SizedBox(width: 12),
+        _buildQuickActionCard(icon: Icons.local_offer, label: 'Coupons', onTap: () {}),
+      ]),
     );
   }
 
   Widget _buildQuickActionCard({
-    required IconData icon,
-    required String label,
-    required VoidCallback onTap,
+    required IconData icon, required String label, required VoidCallback onTap,
   }) {
     return Expanded(
       child: GestureDetector(
@@ -206,26 +156,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(12),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: 0.05),
-                blurRadius: 10,
-              ),
-            ],
+            boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 10)],
           ),
-          child: Column(
-            children: [
-              Icon(icon, color: AppColors.darkGreen, size: 28),
-              const SizedBox(height: 8),
-              Text(
-                label,
-                style: const TextStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ],
-          ),
+          child: Column(children: [
+            Icon(icon, color: AppColors.darkGreen, size: 28),
+            const SizedBox(height: 8),
+            Text(label, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600)),
+          ]),
         ),
       ),
     );
@@ -239,66 +176,42 @@ class _ProfileScreenState extends State<ProfileScreen> {
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              const Text(
-                'طلباتي',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
-              TextButton(
-                onPressed: () {},
-                child: const Text('View All'),
-              ),
-            ],
+      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+          const Text('طلباتي', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700)),
+          TextButton(
+            onPressed: () => context.push('/orders'),
+            child: const Text('View All'),
           ),
-          const SizedBox(height: 12),
-          BlocBuilder<OrderCubit, OrderState>(
-            builder: (context, state) {
-              if (state is OrderLoading) {
-                return const Center(child: CircularProgressIndicator());
-              }
-              if (state is OrderLoaded) {
-                if (state.orders.isEmpty) {
-                  return _buildEmptyOrders();
-                }
-                return Column(
-                  children: state.orders.take(3).map((order) {
-                    return _buildOrderCard(order);
-                  }).toList(),
-                );
-              }
-              return _buildEmptyOrders();
-            },
-          ),
-        ],
-      ),
+        ]),
+        const SizedBox(height: 12),
+        BlocBuilder<OrderCubit, OrderState>(
+          builder: (context, state) {
+            if (state is OrderLoading) {
+              return const Center(child: CircularProgressIndicator());
+            }
+            if (state is OrderLoaded) {
+              if (state.orders.isEmpty) return _buildEmptyOrders();
+              return Column(
+                children: state.orders.take(3).map((order) => _buildOrderCard(order)).toList(),
+              );
+            }
+            return _buildEmptyOrders();
+          },
+        ),
+      ]),
     );
   }
 
   Widget _buildEmptyOrders() {
     return Container(
       padding: const EdgeInsets.all(24),
-      child: Column(
-        children: [
-          Icon(
-            Icons.shopping_bag_outlined,
-            size: 48,
-            color: AppColors.darkGreen.withValues(alpha: 0.3),
-          ),
-          const SizedBox(height: 8),
-          const Text(
-            'No orders yet',
-            style: TextStyle(color: AppColors.textSecondary),
-          ),
-        ],
-      ),
+      child: Column(children: [
+        Icon(Icons.shopping_bag_outlined, size: 48,
+            color: AppColors.darkGreen.withValues(alpha: 0.3)),
+        const SizedBox(height: 8),
+        const Text('No orders yet', style: TextStyle(color: AppColors.textSecondary)),
+      ]),
     );
   }
 
@@ -310,74 +223,43 @@ class _ProfileScreenState extends State<ProfileScreen> {
         color: AppColors.surface,
         borderRadius: BorderRadius.circular(12),
       ),
-      child: Row(
-        children: [
-          Container(
-            width: 48,
-            height: 48,
-            decoration: BoxDecoration(
-              color: AppColors.darkGreen.withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: const Icon(
-              Icons.inventory_2,
-              color: AppColors.darkGreen,
-            ),
+      child: Row(children: [
+        Container(
+          width: 48, height: 48,
+          decoration: BoxDecoration(
+            color: AppColors.darkGreen.withValues(alpha: 0.1),
+            borderRadius: BorderRadius.circular(8),
           ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Order #${order.id}',
-                  style: const TextStyle(fontWeight: FontWeight.w600),
-                ),
-                Text(
-                  'ر.س${order.total.toStringAsFixed(2)}',
-                  style: const TextStyle(
-                    color: AppColors.darkGreen,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-              ],
-            ),
+          child: const Icon(Icons.inventory_2, color: AppColors.darkGreen),
+        ),
+        const SizedBox(width: 12),
+        Expanded(
+          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Text('Order #${order.id}', style: const TextStyle(fontWeight: FontWeight.w600)),
+            Text('ر.س${order.total.toStringAsFixed(2)}',
+                style: const TextStyle(color: AppColors.darkGreen, fontWeight: FontWeight.w700)),
+          ]),
+        ),
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+          decoration: BoxDecoration(
+            color: _getStatusColor(order.status).withValues(alpha: 0.1),
+            borderRadius: BorderRadius.circular(4),
           ),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-            decoration: BoxDecoration(
-              color: _getStatusColor(order.status).withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(4),
-            ),
-            child: Text(
-              order.status.labelAr,
-              style: TextStyle(
-                color: _getStatusColor(order.status),
-                fontSize: 12,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ),
-        ],
-      ),
+          child: Text(order.status.labelAr,
+              style: TextStyle(color: _getStatusColor(order.status), fontSize: 12, fontWeight: FontWeight.w600)),
+        ),
+      ]),
     );
   }
 
   Color _getStatusColor(OrderStatus status) {
     switch (status) {
-      case OrderStatus.pending:
-        return AppColors.gold;
-      case OrderStatus.confirmed:
-      case OrderStatus.processing:
-        return AppColors.teal;
-      case OrderStatus.shipped:
-      case OrderStatus.outForDelivery:
-        return AppColors.slate;
-      case OrderStatus.delivered:
-        return AppColors.success;
-      case OrderStatus.cancelled:
-      case OrderStatus.refunded:
-        return AppColors.error;
+      case OrderStatus.pending: return AppColors.gold;
+      case OrderStatus.confirmed: case OrderStatus.processing: return AppColors.teal;
+      case OrderStatus.shipped: case OrderStatus.outForDelivery: return AppColors.slate;
+      case OrderStatus.delivered: return AppColors.success;
+      case OrderStatus.cancelled: case OrderStatus.refunded: return AppColors.error;
     }
   }
 
@@ -389,75 +271,82 @@ class _ProfileScreenState extends State<ProfileScreen> {
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              const Text(
-                'عناويني',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
-              TextButton.icon(
-                onPressed: () {},
-                icon: const Icon(Icons.add, size: 18),
-                label: const Text('Add'),
-              ),
-            ],
+      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+          const Text('عناويني', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700)),
+          TextButton.icon(
+            onPressed: () => context.push('/addresses'),
+            icon: const Icon(Icons.add, size: 18),
+            label: const Text('Manage'),
           ),
-          const SizedBox(height: 12),
-          GestureDetector(
-            onTap: () {},
-            child: Container(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                border: Border.all(color: AppColors.darkGreen),
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Row(
-                children: [
-                  Container(
-                    padding: const EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                      color: AppColors.darkGreen.withValues(alpha: 0.1),
-                      shape: BoxShape.circle,
-                    ),
-                    child: const Icon(
-                      Icons.home,
-                      color: AppColors.darkGreen,
-                      size: 20,
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  const Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Home',
-                          style: TextStyle(fontWeight: FontWeight.w600),
-                        ),
-                        Text(
-                          'Riyadh, Al-Narjas',
-                          style: TextStyle(
-                            color: AppColors.textSecondary,
-                            fontSize: 13,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const Icon(Icons.chevron_right, color: Colors.grey),
-                ],
-              ),
+        ]),
+        const SizedBox(height: 12),
+        GestureDetector(
+          onTap: () => context.push('/addresses'),
+          child: Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              border: Border.all(color: AppColors.darkGreen),
+              borderRadius: BorderRadius.circular(12),
             ),
+            child: Row(children: [
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: AppColors.darkGreen.withValues(alpha: 0.1),
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(Icons.home, color: AppColors.darkGreen, size: 20),
+              ),
+              const SizedBox(width: 12),
+              const Expanded(
+                child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                  Text('Home', style: TextStyle(fontWeight: FontWeight.w600)),
+                  Text('Riyadh, Al-Narjas',
+                      style: TextStyle(color: AppColors.textSecondary, fontSize: 13)),
+                ]),
+              ),
+              const Icon(Icons.chevron_right, color: Colors.grey),
+            ]),
           ),
-        ],
-      ),
+        ),
+      ]),
+    );
+  }
+
+  Widget _buildEmailVerificationSection() {
+    return BlocBuilder<AuthCubit, AuthState>(
+      builder: (context, state) {
+        if (state is AuthAuthenticated &&
+            state.user != null &&
+            !state.user!.emailVerified) {
+          return Container(
+            margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: AppColors.lightGold,
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: Row(children: [
+              const Icon(Icons.email, color: AppColors.darkGreen),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                  const Text('Verify your email',
+                      style: TextStyle(fontWeight: FontWeight.w600)),
+                  const Text('Check your inbox for the verification link.',
+                      style: TextStyle(fontSize: 12, color: AppColors.textSecondary)),
+                ]),
+              ),
+              TextButton(
+                onPressed: () => context.read<AuthCubit>().sendEmailVerification(),
+                child: const Text('Resend'),
+              ),
+            ]),
+          );
+        }
+        return const SizedBox.shrink();
+      },
     );
   }
 
@@ -489,27 +378,31 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Widget _buildLogoutButton() {
-    return Padding(
-      padding: const EdgeInsets.all(16),
-      child: SizedBox(
-        width: double.infinity,
-        child: OutlinedButton.icon(
-          onPressed: () {
-            context.read<AuthCubit>().signOut();
-            context.read<ShoppingCubit>().clearCart();
-            context.go('/');
-          },
-          icon: const Icon(Icons.logout, color: AppColors.error),
-          label: const Text(
-            'Sign Out',
-            style: TextStyle(color: AppColors.error),
-          ),
-          style: OutlinedButton.styleFrom(
-            side: const BorderSide(color: AppColors.error),
-            padding: const EdgeInsets.symmetric(vertical: 14),
-          ),
-        ),
-      ),
+    return BlocBuilder<AuthCubit, AuthState>(
+      builder: (context, state) {
+        if (state is AuthAuthenticated) {
+          return Padding(
+            padding: const EdgeInsets.all(16),
+            child: SizedBox(
+              width: double.infinity,
+              child: OutlinedButton.icon(
+                onPressed: () {
+                  context.read<AuthCubit>().signOut();
+                  context.read<ShoppingCubit>().clearCart();
+                  context.go('/');
+                },
+                icon: const Icon(Icons.logout, color: AppColors.error),
+                label: const Text('Sign Out', style: TextStyle(color: AppColors.error)),
+                style: OutlinedButton.styleFrom(
+                  side: const BorderSide(color: AppColors.error),
+                  padding: const EdgeInsets.symmetric(vertical: 14),
+                ),
+              ),
+            ),
+          );
+        }
+        return const SizedBox.shrink();
+      },
     );
   }
 }

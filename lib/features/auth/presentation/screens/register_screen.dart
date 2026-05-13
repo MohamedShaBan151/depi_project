@@ -63,9 +63,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
               backgroundColor: Colors.green,
             ),
           );
-
-          // 🔥 بعد التسجيل → Home
-          context.go('/home');
+          context.read<AuthCubit>().sendEmailVerification();
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Verification email sent. Please check your inbox.'),
+              backgroundColor: AppColors.darkGreen,
+            ),
+          );
+          context.go('/');
         }
 
         if (state is AuthError) {
@@ -103,9 +108,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       color: AppColors.ink,
                     ),
                   ),
-
                   const SizedBox(height: 24),
-
                   TextFormField(
                     controller: _nameController,
                     decoration: const InputDecoration(
@@ -113,11 +116,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       prefixIcon: Icon(Icons.person),
                     ),
                     validator: (v) =>
-                    v!.isEmpty ? 'Enter your name' : null,
+                        v!.isEmpty ? 'Enter your name' : null,
                   ),
-
                   const SizedBox(height: 16),
-
                   TextFormField(
                     controller: _emailController,
                     decoration: const InputDecoration(
@@ -125,11 +126,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       prefixIcon: Icon(Icons.email),
                     ),
                     validator: (v) =>
-                    v!.contains('@') ? null : 'Invalid email',
+                        v!.contains('@') ? null : 'Invalid email',
                   ),
-
                   const SizedBox(height: 16),
-
                   TextFormField(
                     controller: _passwordController,
                     obscureText: _obscurePassword,
@@ -150,11 +149,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       ),
                     ),
                     validator: (v) =>
-                    v!.length < 6 ? 'Min 6 chars' : null,
+                        v!.length < 6 ? 'Min 6 chars' : null,
                   ),
-
                   const SizedBox(height: 16),
-
                   TextFormField(
                     controller: _confirmPasswordController,
                     obscureText: _obscureConfirmPassword,
@@ -170,19 +167,17 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         onPressed: () {
                           setState(() {
                             _obscureConfirmPassword =
-                            !_obscureConfirmPassword;
+                                !_obscureConfirmPassword;
                           });
                         },
                       ),
                     ),
                     validator: (v) =>
-                    v != _passwordController.text
-                        ? 'Passwords do not match'
-                        : null,
+                        v != _passwordController.text
+                            ? 'Passwords do not match'
+                            : null,
                   ),
-
                   const SizedBox(height: 12),
-
                   Row(
                     children: [
                       Checkbox(
@@ -196,9 +191,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       const Text('I agree to terms'),
                     ],
                   ),
-
                   const SizedBox(height: 16),
-
                   SizedBox(
                     height: 55,
                     child: ElevatedButton(
@@ -212,10 +205,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       ),
                     ),
                   ),
-
                   const SizedBox(height: 20),
-
-                  // 🔥 Go to Login
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
