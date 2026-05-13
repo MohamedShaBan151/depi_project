@@ -5,14 +5,10 @@ import 'package:noon_clone/main.dart';
 
 void main() {
   testWidgets('App loads successfully', (WidgetTester tester) async {
-    const cartPersistence = null;
+    await tester.pumpWidget(const ECommerceApp());
 
-    await tester.pumpWidget(NoonApp(cartPersistence: cartPersistence));
-
-    // Wait for all animations and async tasks
     await tester.pumpAndSettle();
 
-    // Verify app loaded (MaterialApp exists)
     expect(find.byType(MaterialApp), findsOneWidget);
   });
 }

@@ -4,8 +4,6 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../core/theme/saudi_theme.dart';
 import '../../../../cubits/shopping_cubit.dart';
-import '../../../../data/models/models.dart' as models;
-import '../../data/product_service.dart';
 import '../../domain/entities/product.dart';
 import '../cubit/product_cubit.dart';
 import '../cubit/product_state.dart';
@@ -97,14 +95,21 @@ class _SearchScreenState extends State<SearchScreen> {
           ),
           if (_showFilters) _buildFilters(),
           Expanded(
-            child: _query.isEmpty && !_showFilters
-                ? _SearchSuggestions(onCategoryTap: (cat) {
-                    setState(() {
-                      _filterCategory = cat;
-                      _showFilters = true;
+            child:             _query.isEmpty && !_showFilters
+                ? _SearchSuggestions(
+                    onSuggestionTap: (s) {
+                      _searchController.text = s;
+                      setState(() => _query = s);
                       _performSearch();
-                    });
-                  })
+                    },
+                    onCategoryTap: (cat) {
+                      setState(() {
+                        _filterCategory = cat;
+                        _showFilters = true;
+                        _performSearch();
+                      });
+                    },
+                  )
                 : BlocBuilder<ProductCubit, ProductState>(
                     builder: (context, state) {
                       if (state is ProductLoading) {
@@ -162,7 +167,7 @@ class _SearchScreenState extends State<SearchScreen> {
             height: 36,
             child: ListView(
               scrollDirection: Axis.horizontal,
-              children: ['All', ...ProductService.categories.where((c) => c != 'All')].map((cat) {
+              children: ['All', ...ProductCubit.categories.where((c) => c != 'All')].map((cat) {
                 final selected = (_filterCategory ?? 'All') == cat;
                 return Padding(
                   padding: const EdgeInsets.only(right: 8),
@@ -273,8 +278,9 @@ class _SearchScreenState extends State<SearchScreen> {
 
 class _SearchSuggestions extends StatelessWidget {
   final ValueChanged<String> onCategoryTap;
+  final ValueChanged<String>? onSuggestionTap;
 
-  const _SearchSuggestions({required this.onCategoryTap});
+  const _SearchSuggestions({required this.onCategoryTap, this.onSuggestionTap});
 
   final List<String> _suggestions = const [
     'Mobile phones', 'Laptops', 'Headphones', 'Smart watches',
@@ -295,7 +301,7 @@ class _SearchSuggestions extends StatelessWidget {
             spacing: 8, runSpacing: 8,
             children: _suggestions.map((s) {
               return GestureDetector(
-                onTap: () {},
+                onTap: () => onSuggestionTap?.call(s),
                 child: Container(
                   padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                   decoration: BoxDecoration(
@@ -395,12 +401,7 @@ class _SearchResultCard extends StatelessWidget {
   const _SearchResultCard({required this.product});
 
   void _addToCart(BuildContext context) {
-    context.read<ShoppingCubit>().addToCart(
-      models.Product(
-        id: product.id, name: product.name, category: product.category,
-        price: product.price, imageUrl: product.imageUrl, stock: product.stock,
-      ),
-    );
+    context.read<ShoppingCubit>().addToCartFromDomain(product);
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text('${product.name} added to cart'), backgroundColor: AppColors.darkGreen),
     );

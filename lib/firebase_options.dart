@@ -24,8 +24,8 @@ class DefaultFirebaseOptions {
 
   // 🔥 WEB CONFIG (مهم جدًا)
   static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'YOUR_WEB_API_KEY',
-    appId: 'YOUR_WEB_APP_ID',
+    apiKey: 'AIzaSyBUVrH6khY25hcQBRfv7M4zPDJCUKsUC8U',
+    appId: '1:193428326730:web:5b79dbfc4f4a338c6999b3',
     messagingSenderId: '193428326730',
     projectId: 'noon-clone-85e4a',
     authDomain: 'noon-clone-85e4a.firebaseapp.com',

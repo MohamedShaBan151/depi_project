@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../data/models/models.dart' show CartItem, Product;
 import '../data/data_sources/cart_persistence_service.dart';
+import '../features/products/domain/entities/product.dart' as domain;
 
 class ShoppingState extends Equatable {
   final List<CartItem> cartItems;
@@ -69,6 +70,36 @@ class ShoppingCubit extends Cubit<ShoppingState> {
       items.add(CartItem(product: product));
     }
     _emitAndPersist(state.copyWith(cartItems: items));
+  }
+
+  void addToCartFromDomain(domain.Product product) {
+    addToCart(Product(
+      id: product.id,
+      name: product.name,
+      category: product.category,
+      price: product.price,
+      originalPrice: product.originalPrice,
+      rating: product.rating,
+      reviewCount: product.reviewCount,
+      stock: product.stock,
+      imageUrl: product.imageUrl,
+      isFeatured: product.isFeatured,
+    ));
+  }
+
+  void toggleWishlistFromDomain(domain.Product product) {
+    toggleWishlist(Product(
+      id: product.id,
+      name: product.name,
+      category: product.category,
+      price: product.price,
+      originalPrice: product.originalPrice,
+      rating: product.rating,
+      reviewCount: product.reviewCount,
+      stock: product.stock,
+      imageUrl: product.imageUrl,
+      isFeatured: product.isFeatured,
+    ));
   }
 
   void removeFromCart(String productId) {

@@ -10,7 +10,6 @@
 //   • Cart persistence: loadPersistedCart, save on mutation, clear on clearCart
 // ─────────────────────────────────────────────────────────────────────────────
 
-import 'dart:convert';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:noon_clone/cubits/shopping_cubit.dart';

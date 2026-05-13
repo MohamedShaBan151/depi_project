@@ -4,7 +4,6 @@ import 'package:shimmer/shimmer.dart';
 
 import '../../../../core/theme/saudi_theme.dart';
 import '../../../../cubits/shopping_cubit.dart';
-import '../../../../data/models/models.dart';
 import '../../domain/entities/product.dart' as entity;
 import '../cubit/product_cubit.dart';
 import '../cubit/product_state.dart';
@@ -194,14 +193,7 @@ class _ProductCardState extends State<_ProductCard> {
 
   void _addToCart() {
     final product = widget.product;
-    context.read<ShoppingCubit>().addToCart(Product(
-          id: product.id,
-          name: product.name,
-          category: product.category,
-          price: product.price,
-          imageUrl: product.imageUrl,
-          stock: 0,
-        ));
+    context.read<ShoppingCubit>().addToCartFromDomain(product);
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text('${product.name} added to cart'),

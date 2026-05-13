@@ -4,7 +4,6 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../core/theme/saudi_theme.dart';
 import '../../../../cubits/shopping_cubit.dart';
-import '../../../../data/models/models.dart' as models;
 import '../../domain/entities/product.dart';
 import '../cubit/product_cubit.dart';
 import '../cubit/product_state.dart';
@@ -41,14 +40,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
 
   void _addToCart(Product product) {
     for (int i = 0; i < _quantity; i++) {
-      context.read<ShoppingCubit>().addToCart(
-        models.Product(
-          id: product.id, name: product.name, category: product.category,
-          price: product.price, imageUrl: product.imageUrl, stock: product.stock,
-          originalPrice: product.originalPrice, rating: product.rating,
-          reviewCount: product.reviewCount, isFeatured: product.isFeatured,
-        ),
-      );
+      context.read<ShoppingCubit>().addToCartFromDomain(product);
     }
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
@@ -64,14 +56,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
   }
 
   void _toggleWishlist(Product product) {
-    context.read<ShoppingCubit>().toggleWishlist(
-      models.Product(
-        id: product.id, name: product.name, category: product.category,
-        price: product.price, imageUrl: product.imageUrl, stock: product.stock,
-        originalPrice: product.originalPrice, rating: product.rating,
-        reviewCount: product.reviewCount, isFeatured: product.isFeatured,
-      ),
-    );
+    context.read<ShoppingCubit>().toggleWishlistFromDomain(product);
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(content: Text('Wishlist updated'), backgroundColor: AppColors.darkGreen),
     );

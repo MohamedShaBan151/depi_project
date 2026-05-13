@@ -59,7 +59,7 @@ class CartItem extends Equatable {
       CartItem(product: product, quantity: quantity ?? this.quantity);
 
   @override
-  List<Object?> get props => [product.id];
+  List<Object?> get props => [product.id, quantity];
 }
 
 // ── User ─────────────────────────────────────────────────────────────────────

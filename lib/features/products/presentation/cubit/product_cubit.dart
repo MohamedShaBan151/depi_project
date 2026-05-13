@@ -7,6 +7,10 @@ import '../../domain/entities/product.dart';
 import 'product_state.dart';
 
 class ProductCubit extends Cubit<ProductState> {
+  static const List<String> categories = [
+    'All', 'Electronics', 'Fashion', 'Grocery', 'Toys',
+    'Home', 'Beauty', 'Sports', 'Books', 'Automotive', 'Health', 'Baby',
+  ];
   final ProductService _service;
   List<Product> _all = [];
   StreamSubscription<dynamic>? _subscription;

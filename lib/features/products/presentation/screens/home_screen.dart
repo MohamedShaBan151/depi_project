@@ -6,12 +6,10 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../core/theme/saudi_theme.dart';
 import '../../../../cubits/shopping_cubit.dart';
-import '../../../../data/models/models.dart' as models;
 import '../../domain/entities/product.dart';
 import '../../../../widgets/noon_bottom_nav.dart';
 import '../cubit/product_cubit.dart';
 import '../cubit/product_state.dart';
-import '../../data/product_service.dart';
 
 import 'cart_screen.dart';
 import 'search_screen.dart';
@@ -30,11 +28,17 @@ class _HomeScreenState extends State<HomeScreen> {
 
   late final List<Widget> _pages;
 
+  void _switchToTab(int index) => setState(() => _currentIndex = index);
+
   @override
   void initState() {
     super.initState();
     _pages = [
-      _HomePage(userName: widget.userName),
+      _HomePage(
+        userName: widget.userName,
+        onSearchTap: () => _switchToTab(1),
+        onCartTap: () => _switchToTab(2),
+      ),
       const SearchScreen(),
       const CartScreen(),
       const ProfileScreen(),
@@ -60,7 +64,9 @@ class _HomeScreenState extends State<HomeScreen> {
 
 class _HomePage extends StatefulWidget {
   final String? userName;
-  const _HomePage({this.userName});
+  final VoidCallback? onSearchTap;
+  final VoidCallback? onCartTap;
+  const _HomePage({this.userName, this.onSearchTap, this.onCartTap});
 
   @override
   State<_HomePage> createState() => _HomePageState();
@@ -69,22 +75,11 @@ class _HomePage extends StatefulWidget {
 class _HomePageState extends State<_HomePage> {
   String _selectedCategory = 'All';
   String _sortBy = '';
+  VoidCallback? get _onSearchTap => widget.onSearchTap;
+  VoidCallback? get _onCartTap => widget.onCartTap;
 
   void _addToCart(Product product) {
-    context.read<ShoppingCubit>().addToCart(
-      models.Product(
-        id: product.id,
-        name: product.name,
-        category: product.category,
-        price: product.price,
-        originalPrice: product.originalPrice,
-        rating: product.rating,
-        reviewCount: product.reviewCount,
-        stock: product.stock,
-        imageUrl: product.imageUrl,
-        isFeatured: product.isFeatured,
-      ),
-    );
+    context.read<ShoppingCubit>().addToCartFromDomain(product);
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
       content: Text('${product.name} added to cart'),
       backgroundColor: AppColors.darkGreen,
@@ -112,7 +107,7 @@ class _HomePageState extends State<_HomePage> {
             actions: [
               IconButton(
                 icon: const Icon(Icons.search, color: Colors.white),
-                onPressed: () {},
+                onPressed: _onSearchTap,
               ),
               BlocBuilder<ShoppingCubit, ShoppingState>(
                 builder: (context, state) => Stack(
@@ -120,7 +115,7 @@ class _HomePageState extends State<_HomePage> {
                   children: [
                     IconButton(
                       icon: const Icon(Icons.shopping_cart_outlined, color: Colors.white),
-                      onPressed: () {},
+                      onPressed: _onCartTap,
                     ),
                     if (state.cartCount > 0)
                       Positioned(
@@ -161,10 +156,10 @@ class _HomePageState extends State<_HomePage> {
               child: ListView.separated(
                 padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                 scrollDirection: Axis.horizontal,
-                itemCount: ProductService.categories.length,
+                itemCount: ProductCubit.categories.length,
                 separatorBuilder: (_, __) => const SizedBox(width: 8),
                 itemBuilder: (_, i) {
-                  final cat = ProductService.categories[i];
+                  final cat = ProductCubit.categories[i];
                   final selected = cat == _selectedCategory;
                   return GestureDetector(
                     onTap: () {

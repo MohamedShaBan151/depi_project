@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -15,7 +14,7 @@ class NotificationService {
   }
 
   static Future<void> _requestPermission() async {
-    final settings = await _firebaseMessaging.requestPermission(
+    await _firebaseMessaging.requestPermission(
       alert: true,
       announcement: true,
       badge: true,
@@ -34,12 +33,12 @@ class NotificationService {
       requestSoundPermission: true,
     );
     const settings = InitializationSettings(android: androidSettings, iOS: iosSettings);
-    await _localNotifications.initialize(settings);
+    await _localNotifications.initialize(settings: settings);
   }
 
   static Future<String> _registerToken() async {
     final token = await _firebaseMessaging.getToken();
-    print('FCM Token: $token');
+    debugPrint('FCM Token: $token');
     return token ?? '';
   }
 
@@ -49,7 +48,7 @@ class NotificationService {
     });
 
     FirebaseMessaging.onMessageOpenedApp.listen((message) {
-      print('App opened from notification: ${message.notification?.title}');
+      debugPrint('App opened from notification: ${message.notification?.title}');
     });
   }
 
@@ -60,7 +59,7 @@ class NotificationService {
       channelDescription: 'Notifications for order updates',
       importance: Importance.high,
       priority: Priority.high,
-      color: const Color(0xFF004D26),
+      color: Color(0xFF004D26),
     );
 
     const iosDetails = DarwinNotificationDetails(
@@ -72,10 +71,10 @@ class NotificationService {
     final details = NotificationDetails(android: androidDetails, iOS: iosDetails);
 
     await _localNotifications.show(
-      message.notification?.hashCode ?? 0,
-      message.notification?.title,
-      message.notification?.body,
-      details,
+      id: message.notification?.hashCode ?? 0,
+      title: message.notification?.title,
+      body: message.notification?.body,
+      notificationDetails: details,
     );
   }
 
@@ -100,10 +99,10 @@ class NotificationService {
     };
 
     await _localNotifications.show(
-      orderId.hashCode,
-      titles[status] ?? 'Order Update',
-      bodies[status] ?? 'Order #$orderId status: $status',
-      const NotificationDetails(
+      id: orderId.hashCode,
+      title: titles[status] ?? 'Order Update',
+      body: bodies[status] ?? 'Order #$orderId status: $status',
+      notificationDetails: const NotificationDetails(
         android: AndroidNotificationDetails(
           'noon_orders',
           'Order Notifications',

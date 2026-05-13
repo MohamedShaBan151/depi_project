@@ -90,7 +90,7 @@ class _Banner {
 
 class _BannerTile extends StatelessWidget {
   final _Banner banner;
-  const _BannerTile({super.key, required this.banner});
+  const _BannerTile({required this.banner});
 
   @override
   Widget build(BuildContext context) {

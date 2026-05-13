@@ -63,6 +63,55 @@ class AppLocalizations {
     'address': 'العنوان',
     'add_address': 'إضافة عنوان',
     'default': 'افتراضي',
+    // Reviews & Ratings
+    'reviews': 'التقييمات',
+    'add_review': 'إضافة تقييم',
+    'rating': 'التقييم',
+    'review': 'التقييم',
+    'your_review': 'تقييمك',
+    'submit_review': 'إرسال التقييم',
+    'no_reviews': 'لا توجد تقييمات بعد',
+    'verified_purchase': 'شراء تم التحقق منه',
+    // Wishlist
+    'add_to_wishlist': 'إضافة للمفضلة',
+    'remove_from_wishlist': 'إزالة من المفضلة',
+    'no_wishlist_items': 'المفضلة فارغة',
+    // Returns & Refunds
+    'returns': 'المرتجعات',
+    'request_return': 'طلب استرجاع',
+    'return_reason': 'سبب الاسترجاع',
+    'return_status': 'حالة الاسترجاع',
+    'refund_status': 'حالة استرجاع المبلغ',
+    'return_pending': 'في الانتظار',
+    'return_approved': 'تمت الموافقة',
+    'return_shipped': 'تم الإرسال',
+    'return_received': 'تم الاستقبال',
+    'return_refunded': 'تم استرجاع المبلغ',
+    'no_returns': 'لا توجد طلبات استرجاع',
+    // Network & Errors
+    'network_error': 'خطأ في الاتصال',
+    'no_internet': 'لا يوجد اتصال بالإنترنت',
+    'retry': 'إعادة محاولة',
+    'error_loading': 'خطأ في تحميل البيانات',
+    'error_saving': 'خطأ في حفظ البيانات',
+    'error_deleting': 'خطأ في حذف البيانات',
+    'success': 'نجح',
+    'loading': 'جاري التحميل...',
+    // Pagination
+    'load_more': 'تحميل المزيد',
+    'showing': 'عرض',
+    'of': 'من',
+    'products': 'منتجات',
+    // Support & Help
+    'help_support': 'المساعدة والدعم',
+    'faq': 'الأسئلة الشائعة',
+    'contact_us': 'اتصل بنا',
+    'phone': 'الهاتف',
+    'live_chat': 'دردشة فورية',
+    'email_support': 'البريد الإلكتروني',
+    // Analytics
+    'privacy_policy': 'سياسة الخصوصية',
+    'terms_conditions': 'شروط وأحكام',
   };
 
   static const _en = <String, String>{
@@ -121,6 +170,55 @@ class AppLocalizations {
     'address': 'Address',
     'add_address': 'Add Address',
     'default': 'Default',
+    // Reviews & Ratings
+    'reviews': 'Reviews',
+    'add_review': 'Add Review',
+    'rating': 'Rating',
+    'review': 'Review',
+    'your_review': 'Your Review',
+    'submit_review': 'Submit Review',
+    'no_reviews': 'No reviews yet',
+    'verified_purchase': 'Verified Purchase',
+    // Wishlist
+    'add_to_wishlist': 'Add to Wishlist',
+    'remove_from_wishlist': 'Remove from Wishlist',
+    'no_wishlist_items': 'Your wishlist is empty',
+    // Returns & Refunds
+    'returns': 'Returns',
+    'request_return': 'Request Return',
+    'return_reason': 'Return Reason',
+    'return_status': 'Return Status',
+    'refund_status': 'Refund Status',
+    'return_pending': 'Pending',
+    'return_approved': 'Approved',
+    'return_shipped': 'Shipped',
+    'return_received': 'Received',
+    'return_refunded': 'Refunded',
+    'no_returns': 'No returns yet',
+    // Network & Errors
+    'network_error': 'Network Error',
+    'no_internet': 'No internet connection',
+    'retry': 'Retry',
+    'error_loading': 'Error loading data',
+    'error_saving': 'Error saving data',
+    'error_deleting': 'Error deleting data',
+    'success': 'Success',
+    'loading': 'Loading...',
+    // Pagination
+    'load_more': 'Load More',
+    'showing': 'Showing',
+    'of': 'of',
+    'products': 'products',
+    // Support & Help
+    'help_support': 'Help & Support',
+    'faq': 'FAQ',
+    'contact_us': 'Contact Us',
+    'phone': 'Phone',
+    'live_chat': 'Live Chat',
+    'email_support': 'Email Support',
+    // Analytics
+    'privacy_policy': 'Privacy Policy',
+    'terms_conditions': 'Terms & Conditions',
   };
 
   String translate(String key) {

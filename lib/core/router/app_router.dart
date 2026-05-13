@@ -9,6 +9,7 @@ import '../../features/products/presentation/screens/checkout_screen.dart';
 import '../../features/products/presentation/screens/order_confirmation_screen.dart';
 import '../../features/products/presentation/screens/order_history_screen.dart';
 import '../../features/products/presentation/screens/addresses_screen.dart';
+import '../../features/products/presentation/screens/cart_screen.dart';
 
 final appRouter = GoRouter(
   initialLocation: '/splash',
@@ -40,6 +41,10 @@ final appRouter = GoRouter(
     GoRoute(
       path: '/addresses',
       builder: (_, __) => const AddressesScreen(),
+    ),
+    GoRoute(
+      path: '/cart',
+      builder: (_, __) => const CartScreen(),
     ),
     GoRoute(
       path: '/order-confirmation',

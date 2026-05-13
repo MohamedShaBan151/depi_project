@@ -313,11 +313,14 @@ class _NoonNavItem extends StatelessWidget {
                       Transform(
                         alignment: Alignment.center,
                         transform: Matrix4.identity()
-                          ..translate(0.0, yOffset)
+                          ..translateByDouble(0.0, yOffset, 0.0, 1.0)
                           ..rotateZ(
                               isActive ? controller.iconRotation.value : 0)
-                          ..scale(
-                              isActive ? controller.iconScale.value : 1.0),
+                          ..scaleByDouble(
+                              isActive ? controller.iconScale.value : 1.0,
+                              isActive ? controller.iconScale.value : 1.0,
+                              1.0,
+                              1.0),
                         child: SizedBox(
                             width: 24, height: 24, child: iconWidget),
                       ),
