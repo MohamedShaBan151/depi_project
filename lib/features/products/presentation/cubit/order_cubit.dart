@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
 import '../../data/models/order_model.dart';
@@ -7,37 +6,25 @@ import '../../data/order_firestore_service.dart';
 
 abstract class OrderState extends Equatable {
   const OrderState();
-
-  @override
-  List<Object?> get props => [];
+  @override List<Object?> get props => [];
 }
 
 class OrderInitial extends OrderState {}
-
 class OrderLoading extends OrderState {}
-
 class OrderLoaded extends OrderState {
   final List<FirestoreOrder> orders;
   const OrderLoaded(this.orders);
-
-  @override
-  List<Object?> get props => [orders];
+  @override List<Object?> get props => [orders];
 }
-
 class OrderError extends OrderState {
   final String message;
   const OrderError(this.message);
-
-  @override
-  List<Object?> get props => [message];
+  @override List<Object?> get props => [message];
 }
-
 class OrderTrackingUpdated extends OrderState {
   final FirestoreOrder order;
   const OrderTrackingUpdated(this.order);
-
-  @override
-  List<Object?> get props => [order];
+  @override List<Object?> get props => [order];
 }
 
 class OrderCubit extends Cubit<OrderState> {
@@ -45,7 +32,7 @@ class OrderCubit extends Cubit<OrderState> {
   List<FirestoreOrder> _orders = [];
   StreamSubscription<dynamic>? _subscription;
 
-  OrderCubit() : super(OrderInitial());
+  OrderCubit(Object object) : super(OrderInitial());
 
   void createOrder(FirestoreOrder order) {
     final orders = List<FirestoreOrder>.from(_orders);

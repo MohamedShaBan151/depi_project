@@ -373,7 +373,7 @@ class _ProductCard extends StatelessWidget {
                         if (hasDiscount) ...[
                           const SizedBox(width: 5),
                           Text(
-                            '${product.originalPrice!.toStringAsFixed(0)}',
+                            product.originalPrice!.toStringAsFixed(0),
                             style: const TextStyle(
                                 fontSize: 11,
                                 color: AppColors.textSecondary,

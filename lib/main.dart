@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'bootstrap.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await bootstrap();        // Firebase + offline cache + GetIt
   runApp(const ECommerceApp());
 }
 

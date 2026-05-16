@@ -1,19 +1,15 @@
 import 'dart:async';
-
 import 'package:flutter_bloc/flutter_bloc.dart';
-
 import '../../data/product_service.dart';
 import '../../domain/entities/product.dart';
 import 'product_state.dart';
 
 class ProductCubit extends Cubit<ProductState> {
-  static const List<String> categories = [
-    'All', 'Electronics', 'Fashion', 'Grocery', 'Toys',
-    'Home', 'Beauty', 'Sports', 'Books', 'Automotive', 'Health', 'Baby',
-  ];
   final ProductService _service;
   List<Product> _all = [];
   StreamSubscription<dynamic>? _subscription;
+
+  static const List<String> categories = ProductService.categories;
 
   String _selectedCategory = 'All';
   String _sortBy = '';
