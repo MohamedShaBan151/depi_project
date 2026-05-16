@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "193428326730",
+    "project_id": "noon-clone-85e4a",
+    "storage_bucket": "noon-clone-85e4a.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:193428326730:android:f0a7ef67ec63be4c6999b3",
+        "android_client_info": {
+          "package_name": "com.example.noon_clone"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "193428326730-5t5frin2skmsdm26gjfgb2dlhqt9j792.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD88d9dyX4UEIgjVYoFYr4Q29lk6HZdkIE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "193428326730-5t5frin2skmsdm26gjfgb2dlhqt9j792.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "193428326730-61h4cspp6c7qur82urd9tcq0etk7qo9a.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.noonClone"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
