@@ -1,4 +1,4 @@
-# Capital.sa KSA Clone — Flutter
+# Capital.sa KSA— Flutter
 
 A pixel-faithful Flutter conversion of the Noon Saudi Arabia e-commerce UI (React → Flutter),
 built with Clean Architecture, BLoC/Cubit, and flutter_animate.
