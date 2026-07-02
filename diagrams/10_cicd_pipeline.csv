@@ -1,0 +1,38 @@
+Id,Name,Shape Library,Page ID,Contained By,Line Source,Line Destination,Source Arrow,Destination Arrow,Text Area 1,Text Area 2
+1,Page,,,,,,,,"CI/CD Pipeline",
+2,Swim Lane,Flowchart Shapes,1,,,,,,"CI Stage",
+3,Swim Lane,Flowchart Shapes,1,,,,,,"CD — Staging",
+4,Swim Lane,Flowchart Shapes,1,,,,,,"CD — Production",
+5,Process,Flowchart Shapes,1,2,,,,,,"Developer","Push / PR opened"
+6,Process,Flowchart Shapes,1,2,,,,,,"GitHub","PR trigger"
+7,Process,Flowchart Shapes,1,2,,,,,,"Lint","ESLint · Prettier"
+8,Process,Flowchart Shapes,1,2,,,,,,"Unit Tests","Jest · PyTest"
+9,Process,Flowchart Shapes,1,2,,,,,,"Integration Tests","API contracts"
+10,Process,Flowchart Shapes,1,2,,,,,,"SAST Scan","Security analysis"
+11,Process,Flowchart Shapes,1,2,,,,,,"Build Docker","Multi-stage image"
+12,Process,Flowchart Shapes,1,2,,,,,,"Push to Registry","ECR / GHCR"
+13,Process,Flowchart Shapes,1,3,,,,,,"Deploy Staging","K8s Helm chart"
+14,Process,Flowchart Shapes,1,3,,,,,,"E2E Tests","Cypress · Playwright"
+15,Process,Flowchart Shapes,1,3,,,,,,"Perf Test","k6 load testing"
+16,Process,Flowchart Shapes,1,3,,,,,,"Manual QA Gate","PM approval"
+17,Process,Flowchart Shapes,1,4,,,,,,"Blue/Green Deploy","Zero downtime"
+18,Process,Flowchart Shapes,1,4,,,,,,"Canary Release","5% → 20% → 100%"
+19,Process,Flowchart Shapes,1,4,,,,,,"Smoke Tests","Critical paths"
+20,Terminator,Flowchart Shapes,1,4,,,,,,"Production Live","Rollback ready"
+21,Process,Flowchart Shapes,1,4,,,,,,"Monitoring","Datadog · Sentry · PagerDuty"
+22,Line,Flowchart Shapes,1,,5,6,None,Arrow,,
+23,Line,Flowchart Shapes,1,,6,7,None,Arrow,,
+24,Line,Flowchart Shapes,1,,7,8,None,Arrow,,
+25,Line,Flowchart Shapes,1,,8,9,None,Arrow,,
+26,Line,Flowchart Shapes,1,,9,10,None,Arrow,,
+27,Line,Flowchart Shapes,1,,10,11,None,Arrow,,
+28,Line,Flowchart Shapes,1,,11,12,None,Arrow,,
+29,Line,Flowchart Shapes,1,,12,13,None,Arrow,,
+30,Line,Flowchart Shapes,1,,13,14,None,Arrow,,
+31,Line,Flowchart Shapes,1,,14,15,None,Arrow,,
+32,Line,Flowchart Shapes,1,,15,16,None,Arrow,,
+33,Line,Flowchart Shapes,1,,16,17,None,Arrow,,
+34,Line,Flowchart Shapes,1,,17,18,None,Arrow,,
+35,Line,Flowchart Shapes,1,,18,19,None,Arrow,,
+36,Line,Flowchart Shapes,1,,19,20,None,Arrow,,
+37,Line,Flowchart Shapes,1,,20,21,None,Arrow,,

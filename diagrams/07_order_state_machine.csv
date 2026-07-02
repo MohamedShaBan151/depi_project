@@ -1,0 +1,27 @@
+Id,Name,Shape Library,Page ID,Contained By,Line Source,Line Destination,Source Arrow,Destination Arrow,Text Area 1,Text Area 2
+1,Page,,,,,,,,"Order State Machine",
+2,Terminator,Flowchart Shapes,1,,,,,,"START",
+3,Process,Flowchart Shapes,1,,,,,,"PENDING","Order created · awaiting payment"
+4,Process,Flowchart Shapes,1,,,,,,"PAYMENT_PROCESSING","Gateway charge initiated"
+5,Process,Flowchart Shapes,1,,,,,,"CONFIRMED","Payment captured · stock reserved"
+6,Process,Flowchart Shapes,1,,,,,,"PROCESSING","Warehouse picking & packing"
+7,Process,Flowchart Shapes,1,,,,,,"SHIPPED","Courier collected · tracking active"
+8,Process,Flowchart Shapes,1,,,,,,"OUT_FOR_DELIVERY","Last-mile dispatch"
+9,Process,Flowchart Shapes,1,,,,,,"DELIVERED","Customer received"
+10,Process,Flowchart Shapes,1,,,,,,"CANCELLED","Voided before dispatch"
+11,Process,Flowchart Shapes,1,,,,,,"REFUND_REQUESTED","Customer initiated return"
+12,Process,Flowchart Shapes,1,,,,,,"REFUNDING","Finance processing refund"
+13,Terminator,Flowchart Shapes,1,,,,,,"REFUNDED","Money returned"
+14,Line,Flowchart Shapes,1,,2,3,None,Arrow,,
+15,Line,Flowchart Shapes,1,,3,4,None,Arrow,"checkout_submit",
+16,Line,Flowchart Shapes,1,,4,5,None,Arrow,"payment_success",
+17,Line,Flowchart Shapes,1,,4,10,None,Arrow,"payment_failed",
+18,Line,Flowchart Shapes,1,,5,6,None,Arrow,"warehouse_accept",
+19,Line,Flowchart Shapes,1,,6,7,None,Arrow,"courier_pickup",
+20,Line,Flowchart Shapes,1,,7,8,None,Arrow,"out_for_delivery",
+21,Line,Flowchart Shapes,1,,8,9,None,Arrow,"delivered",
+22,Line,Flowchart Shapes,1,,3,10,None,Arrow,"user_cancel",
+23,Line,Flowchart Shapes,1,,5,10,None,Arrow,"admin_cancel",
+24,Line,Flowchart Shapes,1,,9,11,None,Arrow,"return_request",
+25,Line,Flowchart Shapes,1,,11,12,None,Arrow,"approved",
+26,Line,Flowchart Shapes,1,,12,13,None,Arrow,"refund_done",
