@@ -1,7 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:noon_clone/notifications/notification_service.dart';
-import 'package:noon_clone/features/auth/data/auth_repository_impl.dart';
 import 'package:noon_clone/features/auth/domain/auth_repository.dart';
 
 sealed class AuthState {}
@@ -33,12 +32,12 @@ class AuthCubit extends Cubit<AuthState> {
 
   // ================= SIGN UP =================
   Future<void> signUp(
-      String email,
-      String password,
-      String name, {
-        String role = 'user',
-        String phone = '',
-      }) async {
+    String email,
+    String password,
+    String name, {
+    String role = 'user',
+    String phone = '',
+  }) async {
     emit(AuthLoading());
 
     try {

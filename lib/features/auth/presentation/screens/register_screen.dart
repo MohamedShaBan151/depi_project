@@ -76,7 +76,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
     if (_isAdminSelected) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Admin account is created by the system. Please login.'),
+          content:
+              Text('Admin account is created by the system. Please login.'),
           backgroundColor: Colors.orange,
         ),
       );
@@ -105,12 +106,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
     try {
       await context.read<AuthCubit>().signUp(
-        _emailController.text.trim(),
-        _passwordController.text,
-        _nameController.text.trim(),
-        phone: _fullPhoneNumber,
-        role: _selectedRole,
-      );
+            _emailController.text.trim(),
+            _passwordController.text,
+            _nameController.text.trim(),
+            phone: _fullPhoneNumber,
+            role: _selectedRole,
+          );
     } catch (e) {
       if (!mounted) return;
 
@@ -249,9 +250,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       const SizedBox(width: 48),
                     ],
                   ),
-
                   const SizedBox(height: 22),
-
                   const Text(
                     'Create Account',
                     style: TextStyle(
@@ -260,23 +259,17 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-
                   const SizedBox(height: 6),
-
                   Text(
                     'Join millions of shoppers today.',
                     style: TextStyle(
-                      color: greenColor.withOpacity(0.7),
+                      color: greenColor.withValues(alpha: 0.7),
                       fontSize: 13,
                     ),
                   ),
-
                   const SizedBox(height: 24),
-
                   const _FieldLabel(text: 'REGISTER AS'),
-
                   const SizedBox(height: 10),
-
                   Row(
                     children: [
                       Expanded(
@@ -319,7 +312,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       ),
                     ],
                   ),
-
                   if (_isAdminSelected) ...[
                     const SizedBox(height: 14),
                     Container(
@@ -327,7 +319,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       decoration: BoxDecoration(
                         color: const Color(0xffFFF8E7),
                         borderRadius: BorderRadius.circular(8),
-                        border: Border.all(color: goldColor.withOpacity(0.6)),
+                        border:
+                            Border.all(color: goldColor.withValues(alpha: 0.6)),
                       ),
                       child: const Text(
                         'Admin accounts cannot be created from registration. Use the default admin email and password to login.',
@@ -340,13 +333,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       ),
                     ),
                   ],
-
                   const SizedBox(height: 30),
-
                   const _FieldLabel(text: 'FULL NAME'),
-
                   const SizedBox(height: 8),
-
                   TextFormField(
                     controller: _nameController,
                     decoration: const InputDecoration(
@@ -366,13 +355,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       return null;
                     },
                   ),
-
                   const SizedBox(height: 22),
-
                   const _FieldLabel(text: 'EMAIL ADDRESS'),
-
                   const SizedBox(height: 8),
-
                   TextFormField(
                     controller: _emailController,
                     keyboardType: TextInputType.emailAddress,
@@ -398,20 +383,16 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       return null;
                     },
                   ),
-
                   const SizedBox(height: 22),
-
                   const _FieldLabel(text: 'PHONE NUMBER'),
-
                   const SizedBox(height: 8),
-
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       SizedBox(
                         width: 135,
                         child: DropdownButtonFormField<Map<String, String>>(
-                          value: _selectedCountry,
+                          initialValue: _selectedCountry,
                           isExpanded: true,
                           icon: const Icon(
                             Icons.keyboard_arrow_down,
@@ -454,9 +435,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           },
                         ),
                       ),
-
                       const SizedBox(width: 14),
-
                       Expanded(
                         child: TextFormField(
                           controller: _phoneController,
@@ -488,13 +467,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       ),
                     ],
                   ),
-
                   const SizedBox(height: 22),
-
                   const _FieldLabel(text: 'PASSWORD'),
-
                   const SizedBox(height: 8),
-
                   TextFormField(
                     controller: _passwordController,
                     obscureText: _obscurePassword,
@@ -535,9 +510,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       return null;
                     },
                   ),
-
                   const SizedBox(height: 22),
-
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -566,7 +539,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             children: [
                               TextSpan(
                                 text:
-                                'By creating an account, you agree to our ',
+                                    'By creating an account, you agree to our ',
                               ),
                               TextSpan(
                                 text: 'Terms and Conditions',
@@ -583,9 +556,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       ),
                     ],
                   ),
-
                   const SizedBox(height: 22),
-
                   SizedBox(
                     height: 54,
                     child: ElevatedButton(
@@ -600,27 +571,25 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       ),
                       child: _isLoading
                           ? const SizedBox(
-                        width: 22,
-                        height: 22,
-                        child: CircularProgressIndicator(
-                          strokeWidth: 2,
-                          color: Colors.white,
-                        ),
-                      )
+                              width: 22,
+                              height: 22,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                color: Colors.white,
+                              ),
+                            )
                           : Text(
-                        _isAdminSelected
-                            ? 'Go to Admin Login'
-                            : 'Create Account',
-                        style: const TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 15,
-                        ),
-                      ),
+                              _isAdminSelected
+                                  ? 'Go to Admin Login'
+                                  : 'Create Account',
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 15,
+                              ),
+                            ),
                     ),
                   ),
-
                   const SizedBox(height: 28),
-
                   Text(
                     'SIGN UP WITH',
                     textAlign: TextAlign.center,
@@ -631,9 +600,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       letterSpacing: 0.5,
                     ),
                   ),
-
                   const SizedBox(height: 18),
-
                   Row(
                     children: [
                       Expanded(
@@ -655,16 +622,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       ),
                     ],
                   ),
-
                   const SizedBox(height: 28),
-
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
                         'Already have an account? ',
                         style: TextStyle(
-                          color: greenColor.withOpacity(0.8),
+                          color: greenColor.withValues(alpha: 0.8),
                           fontSize: 12,
                           fontWeight: FontWeight.w500,
                         ),
@@ -682,7 +647,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       ),
                     ],
                   ),
-
                   const SizedBox(height: 14),
                 ],
               ),
@@ -719,7 +683,7 @@ class _RoleButton extends StatelessWidget {
         height: 72,
         padding: const EdgeInsets.symmetric(horizontal: 6),
         decoration: BoxDecoration(
-          color: isSelected ? goldColor.withOpacity(0.18) : Colors.white,
+          color: isSelected ? goldColor.withValues(alpha: 0.18) : Colors.white,
           borderRadius: BorderRadius.circular(8),
           border: Border.all(
             color: isSelected ? goldColor : const Color(0xffEEEEEE),

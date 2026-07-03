@@ -36,9 +36,9 @@ class _NoonBottomNavState extends State<NoonBottomNav>
   late final List<_NoonItemController> _controllers;
 
   static const _items = [
-    _NavItem(label: 'Home',    icon: _NavIcon.home),
-    _NavItem(label: 'Search',  icon: _NavIcon.search),
-    _NavItem(label: 'Cart',    icon: _NavIcon.cart),
+    _NavItem(label: 'Home', icon: _NavIcon.home),
+    _NavItem(label: 'Search', icon: _NavIcon.search),
+    _NavItem(label: 'Cart', icon: _NavIcon.cart),
     _NavItem(label: 'Account', icon: _NavIcon.account),
   ];
 
@@ -103,9 +103,8 @@ class _NoonItemController {
     _pillCtrl = AnimationController(
         vsync: vsync, duration: const Duration(milliseconds: 460));
     _pillScale =
-        CurvedAnimation(parent: _pillCtrl, curve: _BackOutCurve(2.2));
-    _pillOpacity =
-        CurvedAnimation(parent: _pillCtrl, curve: Curves.easeOut);
+        CurvedAnimation(parent: _pillCtrl, curve: const _BackOutCurve(2.2));
+    _pillOpacity = CurvedAnimation(parent: _pillCtrl, curve: Curves.easeOut);
 
     _iconCtrl = AnimationController(
         vsync: vsync, duration: const Duration(milliseconds: 500));
@@ -117,7 +116,7 @@ class _NoonItemController {
       ),
       TweenSequenceItem(
         tween: Tween<double>(begin: -7, end: -5)
-            .chain(CurveTween(curve: _ElasticOutCurve(1.0, 0.45))),
+            .chain(CurveTween(curve: const _ElasticOutCurve(1.0, 0.45))),
         weight: 70,
       ),
     ]).animate(_iconCtrl);
@@ -129,18 +128,17 @@ class _NoonItemController {
       ),
       TweenSequenceItem(
         tween: Tween<double>(begin: 1.2, end: 1.15)
-            .chain(CurveTween(curve: _ElasticOutCurve(1.0, 0.45))),
+            .chain(CurveTween(curve: const _ElasticOutCurve(1.0, 0.45))),
         weight: 70,
       ),
     ]).animate(_iconCtrl);
     _iconRotation = Tween<double>(begin: -10 * math.pi / 180, end: 0)
-        .chain(CurveTween(curve: _ElasticOutCurve(1.1, 0.4)))
+        .chain(CurveTween(curve: const _ElasticOutCurve(1.1, 0.4)))
         .animate(_iconCtrl);
 
     _labelCtrl = AnimationController(
         vsync: vsync, duration: const Duration(milliseconds: 260));
-    _labelOpacity =
-        CurvedAnimation(parent: _labelCtrl, curve: Curves.easeOut);
+    _labelOpacity = CurvedAnimation(parent: _labelCtrl, curve: Curves.easeOut);
     _labelY = Tween<double>(begin: 6, end: 0)
         .chain(CurveTween(curve: Curves.easeOut))
         .animate(_labelCtrl);
@@ -198,7 +196,7 @@ class _NoonItemController {
         duration: const Duration(milliseconds: 220), curve: Curves.easeIn);
     _iconCtrl.animateBack(0,
         duration: const Duration(milliseconds: 280),
-        curve: _BackOutCurve(1.4));
+        curve: const _BackOutCurve(1.4));
     _labelCtrl.animateTo(0,
         duration: const Duration(milliseconds: 160), curve: Curves.easeIn);
   }
@@ -294,8 +292,7 @@ class _NoonNavItem extends StatelessWidget {
                       child: Transform.scale(
                         scale: controller.pillScale.value,
                         child: Opacity(
-                          opacity:
-                              controller.pillOpacity.value.clamp(0.0, 1.0),
+                          opacity: controller.pillOpacity.value.clamp(0.0, 1.0),
                           child: DecoratedBox(
                             decoration: BoxDecoration(
                               color: const Color(0xFFFFCC00),
@@ -316,10 +313,9 @@ class _NoonNavItem extends StatelessWidget {
                           ..translate(0.0, yOffset)
                           ..rotateZ(
                               isActive ? controller.iconRotation.value : 0)
-                          ..scale(
-                              isActive ? controller.iconScale.value : 1.0),
-                        child: SizedBox(
-                            width: 24, height: 24, child: iconWidget),
+                          ..scale(isActive ? controller.iconScale.value : 1.0),
+                        child:
+                            SizedBox(width: 24, height: 24, child: iconWidget),
                       ),
                       const SizedBox(height: 2),
                       SizedBox(
@@ -422,10 +418,10 @@ class _NavIconPainter extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final color =
-        active ? const Color(0xFF18181B) : const Color(0xFF71717A);
+    final color = active ? const Color(0xFF18181B) : const Color(0xFF71717A);
     return CustomPaint(
-        size: const Size(24, 24), painter: _IconPainter(icon: icon, color: color));
+        size: const Size(24, 24),
+        painter: _IconPainter(icon: icon, color: color));
   }
 }
 

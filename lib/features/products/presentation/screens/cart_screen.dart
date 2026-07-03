@@ -144,7 +144,9 @@ class _CartItemCard extends StatelessWidget {
                     _QuantityButton(
                       icon: Icons.remove,
                       onTap: () {
-                        context.read<ShoppingCubit>().removeFromCart(product.id);
+                        context
+                            .read<ShoppingCubit>()
+                            .removeFromCart(product.id);
                       },
                     ),
                     Container(
@@ -167,7 +169,9 @@ class _CartItemCard extends StatelessWidget {
                     IconButton(
                       icon: const Icon(Icons.delete_outline, color: Colors.red),
                       onPressed: () {
-                        context.read<ShoppingCubit>().deleteFromCart(product.id);
+                        context
+                            .read<ShoppingCubit>()
+                            .deleteFromCart(product.id);
                       },
                     ),
                   ],
@@ -209,7 +213,7 @@ class _CartSummary extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final freeShippingThreshold = 200.0;
+    const freeShippingThreshold = 200.0;
     final progress = (state.cartTotal / freeShippingThreshold).clamp(0.0, 1.0);
     final remaining = freeShippingThreshold - state.cartTotal;
 
@@ -234,7 +238,8 @@ class _CartSummary extends StatelessWidget {
                   LinearProgressIndicator(
                     value: progress,
                     backgroundColor: AppColors.divider,
-                    valueColor: const AlwaysStoppedAnimation(AppColors.darkGreen),
+                    valueColor:
+                        const AlwaysStoppedAnimation(AppColors.darkGreen),
                   ),
                   const SizedBox(height: 8),
                   Text(

@@ -18,7 +18,8 @@ class OrderConfirmationScreen extends StatefulWidget {
   });
 
   @override
-  State<OrderConfirmationScreen> createState() => _OrderConfirmationScreenState();
+  State<OrderConfirmationScreen> createState() =>
+      _OrderConfirmationScreenState();
 }
 
 class _OrderConfirmationScreenState extends State<OrderConfirmationScreen>
@@ -175,7 +176,7 @@ class _OrderConfirmationScreenState extends State<OrderConfirmationScreen>
               ),
               Text(
                 'Free',
-                style: const TextStyle(color: AppColors.success),
+                style: TextStyle(color: AppColors.success),
               ),
             ],
           ),
@@ -243,7 +244,9 @@ class _OrderConfirmationScreenState extends State<OrderConfirmationScreen>
                           width: 40,
                           height: 40,
                           decoration: BoxDecoration(
-                            color: isActive ? AppColors.darkGreen : AppColors.divider,
+                            color: isActive
+                                ? AppColors.darkGreen
+                                : AppColors.divider,
                             shape: BoxShape.circle,
                           ),
                           child: Icon(
@@ -257,7 +260,9 @@ class _OrderConfirmationScreenState extends State<OrderConfirmationScreen>
                           step['label'] as String,
                           style: TextStyle(
                             fontSize: 10,
-                            color: isActive ? AppColors.ink : AppColors.textSecondary,
+                            color: isActive
+                                ? AppColors.ink
+                                : AppColors.textSecondary,
                           ),
                         ),
                       ],
@@ -266,7 +271,8 @@ class _OrderConfirmationScreenState extends State<OrderConfirmationScreen>
                       Container(
                         width: 40,
                         height: 2,
-                        color: index < 1 ? AppColors.darkGreen : AppColors.divider,
+                        color:
+                            index < 1 ? AppColors.darkGreen : AppColors.divider,
                       ),
                   ],
                 );

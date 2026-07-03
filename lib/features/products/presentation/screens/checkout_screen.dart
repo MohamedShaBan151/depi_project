@@ -4,7 +4,6 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../core/theme/saudi_theme.dart';
 import '../../../../cubits/shopping_cubit.dart';
-import '../../../../data/models/models.dart';
 
 class CheckoutScreen extends StatefulWidget {
   const CheckoutScreen({super.key});
@@ -83,19 +82,22 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                 title: const Text('Address'),
                 content: _buildAddressStep(state),
                 isActive: _currentStep >= 0,
-                state: _currentStep > 0 ? StepState.complete : StepState.indexed,
+                state:
+                    _currentStep > 0 ? StepState.complete : StepState.indexed,
               ),
               Step(
                 title: const Text('Delivery'),
                 content: _buildDeliveryStep(state),
                 isActive: _currentStep >= 1,
-                state: _currentStep > 1 ? StepState.complete : StepState.indexed,
+                state:
+                    _currentStep > 1 ? StepState.complete : StepState.indexed,
               ),
               Step(
                 title: const Text('Payment'),
                 content: _buildPaymentStep(state),
                 isActive: _currentStep >= 2,
-                state: _currentStep > 2 ? StepState.complete : StepState.indexed,
+                state:
+                    _currentStep > 2 ? StepState.complete : StepState.indexed,
               ),
             ],
           );
@@ -270,7 +272,8 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
             children: [
               const Row(
                 children: [
-                  Icon(Icons.local_shipping, size: 20, color: AppColors.darkGreen),
+                  Icon(Icons.local_shipping,
+                      size: 20, color: AppColors.darkGreen),
                   SizedBox(width: 8),
                   Text(
                     'ملخص الطلب',
@@ -318,7 +321,8 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     );
   }
 
-  Widget _buildDeliveryOption(String title, String price, String time, String value) {
+  Widget _buildDeliveryOption(
+      String title, String price, String time, String value) {
     return GestureDetector(
       onTap: () {},
       child: Container(

@@ -45,8 +45,10 @@ class _SearchScreenState extends State<SearchScreen> {
               style: const TextStyle(color: Colors.white),
               decoration: InputDecoration(
                 hintText: 'Search products...',
-                hintStyle: TextStyle(color: Colors.white.withValues(alpha: 0.7)),
-                prefixIcon: Icon(Icons.search, color: Colors.white.withValues(alpha: 0.7)),
+                hintStyle:
+                    TextStyle(color: Colors.white.withValues(alpha: 0.7)),
+                prefixIcon: Icon(Icons.search,
+                    color: Colors.white.withValues(alpha: 0.7)),
                 suffixIcon: _query.isNotEmpty
                     ? IconButton(
                         icon: const Icon(Icons.clear, color: Colors.white),
@@ -62,7 +64,8 @@ class _SearchScreenState extends State<SearchScreen> {
                   borderRadius: BorderRadius.circular(12),
                   borderSide: BorderSide.none,
                 ),
-                contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                contentPadding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               ),
               onChanged: (value) {
                 setState(() => _query = value);
@@ -80,7 +83,9 @@ class _SearchScreenState extends State<SearchScreen> {
                       }
                       if (state is ProductLoaded) {
                         final products = state.products
-                            .where((p) => p.name.toLowerCase().contains(_query.toLowerCase()))
+                            .where((p) => p.name
+                                .toLowerCase()
+                                .contains(_query.toLowerCase()))
                             .toList();
                         if (products.isEmpty) {
                           return _NoResults(query: _query);
@@ -139,7 +144,8 @@ class _SearchSuggestions extends StatelessWidget {
               return GestureDetector(
                 onTap: () {},
                 child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                   decoration: BoxDecoration(
                     color: AppColors.lightGold,
                     borderRadius: BorderRadius.circular(20),
@@ -171,7 +177,7 @@ class _SearchSuggestions extends StatelessWidget {
             crossAxisCount: 4,
             mainAxisSpacing: 12,
             crossAxisSpacing: 12,
-            children: [
+            children: const [
               _CategoryTile(icon: Icons.devices, label: 'Electronics'),
               _CategoryTile(icon: Icons.checkroom, label: 'Fashion'),
               _CategoryTile(icon: Icons.home, label: 'Home'),
@@ -302,7 +308,8 @@ class _SearchResultCard extends StatelessWidget {
               color: AppColors.lightGold.withValues(alpha: 0.3),
               borderRadius: BorderRadius.circular(8),
             ),
-            child: const Icon(Icons.inventory_2_outlined, color: AppColors.darkGreen),
+            child: const Icon(Icons.inventory_2_outlined,
+                color: AppColors.darkGreen),
           ),
           const SizedBox(width: 12),
           Expanded(
@@ -327,7 +334,8 @@ class _SearchResultCard extends StatelessWidget {
             ),
           ),
           IconButton(
-            icon: const Icon(Icons.add_shopping_cart, color: AppColors.darkGreen),
+            icon:
+                const Icon(Icons.add_shopping_cart, color: AppColors.darkGreen),
             onPressed: () => _addToCart(context),
           ),
         ],

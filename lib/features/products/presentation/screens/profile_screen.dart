@@ -56,7 +56,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget _buildProfileHeader() {
     return BlocBuilder<AuthCubit, AuthState>(
       builder: (context, state) {
-        if (state is AuthAuthenticated && state.user != null) {
+        if (state is AuthAuthenticated) {
           return Container(
             padding: const EdgeInsets.all(24),
             color: AppColors.darkGreen,
@@ -65,7 +65,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 Container(
                   width: 72,
                   height: 72,
-                  decoration: BoxDecoration(
+                  decoration: const BoxDecoration(
                     color: Colors.white,
                     shape: BoxShape.circle,
                   ),
@@ -81,7 +81,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        state.user!.displayName ?? 'User',
+                        state.user.displayName ?? 'User',
                         style: const TextStyle(
                           color: Colors.white,
                           fontSize: 20,
@@ -90,7 +90,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        state.user!.email ?? '',
+                        state.user.email ?? '',
                         style: const TextStyle(
                           color: Colors.white70,
                           fontSize: 14,
@@ -111,7 +111,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               Container(
                 width: 72,
                 height: 72,
-                decoration: BoxDecoration(
+                decoration: const BoxDecoration(
                   color: Colors.white,
                   shape: BoxShape.circle,
                 ),
@@ -478,7 +478,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
       child: Column(
         children: settings.map((setting) {
           return ListTile(
-            leading: Icon(setting['icon'] as IconData, color: AppColors.darkGreen),
+            leading:
+                Icon(setting['icon'] as IconData, color: AppColors.darkGreen),
             title: Text(setting['title'] as String),
             trailing: const Icon(Icons.chevron_right, color: Colors.grey),
             onTap: () {},

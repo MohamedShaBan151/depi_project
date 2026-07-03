@@ -201,7 +201,8 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                     color: AppColors.lightGold.withValues(alpha: 0.3),
                     borderRadius: BorderRadius.circular(8),
                     border: Border.all(
-                      color: isSelected ? AppColors.darkGreen : Colors.transparent,
+                      color:
+                          isSelected ? AppColors.darkGreen : Colors.transparent,
                       width: 2,
                     ),
                   ),
@@ -263,7 +264,11 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                   final filled = i < rating.floor();
                   final half = !filled && i < rating && rating - i >= 0.5;
                   return Icon(
-                    half ? Icons.star_half : filled ? Icons.star : Icons.star_border,
+                    half
+                        ? Icons.star_half
+                        : filled
+                            ? Icons.star
+                            : Icons.star_border,
                     size: 18,
                     color: AppColors.gold,
                   );
@@ -308,7 +313,8 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                 ),
                 const SizedBox(width: 8),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                   decoration: BoxDecoration(
                     color: AppColors.error,
                     borderRadius: BorderRadius.circular(4),
@@ -411,10 +417,10 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
       color: Colors.white,
       margin: const EdgeInsets.only(top: 8),
       padding: const EdgeInsets.all(16),
-      child: Column(
+      child: const Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
+          Text(
             'البائع',
             style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
           ),

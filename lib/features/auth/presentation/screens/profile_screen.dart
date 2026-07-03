@@ -62,7 +62,7 @@ class ProfileScreen extends StatelessWidget {
                           Text(
                             'Hello,',
                             style: TextStyle(
-                              color: greenColor.withOpacity(0.85),
+                              color: greenColor.withValues(alpha: 0.85),
                               fontSize: 14,
                               fontWeight: FontWeight.w500,
                             ),
@@ -99,13 +99,13 @@ class ProfileScreen extends StatelessWidget {
                               : null,
                           child: user.photoURL == null
                               ? Text(
-                            initial,
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 22,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          )
+                                  initial,
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 22,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                )
                               : null,
                         ),
                       ),
@@ -138,7 +138,7 @@ class ProfileScreen extends StatelessWidget {
               Container(
                 width: double.infinity,
                 padding:
-                const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
+                    const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
                 decoration: BoxDecoration(
                   color: darkCardColor,
                   borderRadius: BorderRadius.circular(14),

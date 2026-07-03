@@ -28,9 +28,9 @@ class _LoginScreenState extends State<LoginScreen> {
 
     try {
       await context.read<AuthCubit>().signIn(
-        _emailController.text.trim(),
-        _passwordController.text,
-      );
+            _emailController.text.trim(),
+            _passwordController.text,
+          );
     } catch (e) {
       if (!mounted) return;
 
@@ -148,9 +148,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         size: 26,
                       ),
                     ),
-
                     const SizedBox(height: 26),
-
                     const Text(
                       'Welcome back',
                       style: TextStyle(
@@ -159,20 +157,16 @@ class _LoginScreenState extends State<LoginScreen> {
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-
                     const SizedBox(height: 8),
-
                     Text(
                       'Log in to your account to continue shopping',
                       style: TextStyle(
-                        color: greenColor.withOpacity(0.75),
+                        color: greenColor.withValues(alpha: 0.75),
                         fontSize: 13,
                       ),
                       textAlign: TextAlign.center,
                     ),
-
                     const SizedBox(height: 34),
-
                     const Align(
                       alignment: Alignment.centerLeft,
                       child: Text(
@@ -185,9 +179,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                       ),
                     ),
-
                     const SizedBox(height: 8),
-
                     TextFormField(
                       controller: _emailController,
                       keyboardType: TextInputType.emailAddress,
@@ -213,9 +205,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         return null;
                       },
                     ),
-
                     const SizedBox(height: 22),
-
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -248,9 +238,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                       ],
                     ),
-
                     const SizedBox(height: 8),
-
                     TextFormField(
                       controller: _passwordController,
                       obscureText: _obscurePassword,
@@ -286,9 +274,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         return null;
                       },
                     ),
-
                     const SizedBox(height: 30),
-
                     SizedBox(
                       width: double.infinity,
                       height: 54,
@@ -304,25 +290,23 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                         child: _isLoading
                             ? const SizedBox(
-                          width: 22,
-                          height: 22,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2,
-                            color: Colors.white,
-                          ),
-                        )
+                                width: 22,
+                                height: 22,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                  color: Colors.white,
+                                ),
+                              )
                             : const Text(
-                          'Login',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 15,
-                          ),
-                        ),
+                                'Login',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 15,
+                                ),
+                              ),
                       ),
                     ),
-
                     const SizedBox(height: 30),
-
                     Text(
                       'OR LOGIN WITH',
                       style: TextStyle(
@@ -332,9 +316,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         letterSpacing: 0.5,
                       ),
                     ),
-
                     const SizedBox(height: 18),
-
                     Row(
                       children: [
                         Expanded(
@@ -363,16 +345,14 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                       ],
                     ),
-
                     const SizedBox(height: 62),
-
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
                           "Don't have an account? ",
                           style: TextStyle(
-                            color: greenColor.withOpacity(0.8),
+                            color: greenColor.withValues(alpha: 0.8),
                             fontSize: 12,
                             fontWeight: FontWeight.w500,
                           ),
@@ -390,12 +370,10 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                       ],
                     ),
-
                     const SizedBox(height: 30),
-
-                    Row(
+                    const Row(
                       mainAxisAlignment: MainAxisAlignment.center,
-                      children: const [
+                      children: [
                         _FooterLink(text: 'TERMS OF USE'),
                         _FooterDot(),
                         _FooterLink(text: 'PRIVACY POLICY'),
@@ -442,18 +420,18 @@ class _SocialButton extends StatelessWidget {
         child: Center(
           child: text != null
               ? Text(
-            text!,
-            style: const TextStyle(
-              color: greenColor,
-              fontSize: 21,
-              fontWeight: FontWeight.bold,
-            ),
-          )
+                  text!,
+                  style: const TextStyle(
+                    color: greenColor,
+                    fontSize: 21,
+                    fontWeight: FontWeight.bold,
+                  ),
+                )
               : Icon(
-            icon,
-            color: greenColor,
-            size: 24,
-          ),
+                  icon,
+                  color: greenColor,
+                  size: 24,
+                ),
         ),
       ),
     );
